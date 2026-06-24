@@ -32,7 +32,7 @@ Batch 2 - Evidence Graph Agentic RAG planning。
 | Phase 1 | Evidence Graph 数据模型 | 已完成 |
 | Phase 2 | Layout 关系与 Section 构建 | 已完成 |
 | Phase 3 | Hybrid Retrieval Index | 已完成 |
-| Phase 4 | Graph Expansion 与 Evidence Pack | 待开始 |
+| Phase 4 | Graph Expansion 与 Evidence Pack | 已完成 |
 | Phase 5 | Tool Registry 与 Trace Store | 待开始 |
 | Phase 6 | Claim Verification | 待开始 |
 | Phase 7 | Evaluation Harness | 待开始 |
@@ -99,3 +99,41 @@ V1 Phase 1 到 Phase 3 已按“详细设计 -> 实现 -> 验证 -> 记录”的
 进入 V1 Phase 4：Graph Expansion 与 Evidence Pack。
 
 Phase 4 必须先写 `docs/v1/phase04-graph-expansion-evidence-pack-detailed-design.md`，再实现从 hybrid candidates 到 answer-ready evidence pack 的图邻域扩展。
+
+## 2026-06-24：Phase 4 闭环
+
+### 当前阶段
+
+V1 Phase 4 - Graph Expansion 与 Evidence Pack 已按“详细设计 -> 实现 -> 验证 -> 记录”的工作流完成。
+
+### 详细设计
+
+- 新增 `docs/v1/phase04-graph-expansion-evidence-pack-detailed-design.md`。
+- 明确 evidence pack 输入输出、graph expansion 策略、inclusion reason、排序规则和验收标准。
+
+### 实现摘要
+
+- 新增 `backend/app/schemas/evidence_pack.py`。
+- 新增 `backend/app/services/evidence_pack.py`。
+- 新增 API：`GET /api/documents/{document_id}/evidence-pack`。
+- Evidence Pack 会先调用 hybrid retrieval，再按 `contains`、`next`、`part_of`、`caption_of`、`near` 扩展图邻域。
+- 每个 pack item 记录：
+  - source candidate id。
+  - source candidate rank。
+  - graph distance。
+  - inclusion reason。
+  - edge path。
+  - score breakdown。
+- 前端 API 类型新增 `EvidenceEdge`、`EvidencePackItem`、`EvidencePackResponse`。
+
+### 验证记录
+
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests\test_evidence_pack.py`：2 passed，1 warning。
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests`：29 passed，1 warning。
+- `npm run build`：Next.js production build 通过。
+
+### 下一步
+
+进入 V1 Phase 5：Tool Registry 与 Trace Store。
+
+Phase 5 必须先写 `docs/v1/phase05-tool-registry-trace-store-detailed-design.md`，再把工具 schema、tool call 持久化和 trace API 做成 Agent runtime 的基础设施。

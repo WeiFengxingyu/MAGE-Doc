@@ -67,6 +67,18 @@ export type ToolTrace = {
   latency_ms: number;
 };
 
+export type EvidenceEdge = {
+  id: string;
+  document_id: string;
+  source_node_id: string | null;
+  target_node_id: string;
+  edge_type: "contains" | "next" | "part_of" | "caption_of" | "near" | string;
+  weight: number;
+  source: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+
 export type SearchResult = {
   rank: number;
   score: number;
@@ -82,6 +94,36 @@ export type SearchResponse = {
   query: string;
   document_id: string;
   results: SearchResult[];
+  tool_trace: ToolTrace;
+};
+
+export type EvidencePackItem = {
+  node: EvidenceNode;
+  source_candidate_node_id: string;
+  source_candidate_rank: number;
+  graph_distance: number;
+  inclusion_reason: string;
+  path: EvidenceEdge[];
+  score_breakdown: Record<string, number>;
+  metadata: Record<string, unknown>;
+};
+
+export type EvidencePackResponse = {
+  query: string;
+  document_id: string;
+  source_candidates: SearchResult[];
+  nodes: EvidenceNode[];
+  edges: EvidenceEdge[];
+  items: EvidencePackItem[];
+  summary: {
+    source_candidate_count: number;
+    expanded_node_count: number;
+    edge_count: number;
+    item_count: number;
+    max_graph_distance: number;
+    edge_type_counts: Record<string, number>;
+    node_type_counts: Record<string, number>;
+  };
   tool_trace: ToolTrace;
 };
 

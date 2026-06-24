@@ -26,6 +26,7 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V1 Phase 1 Detailed Design](docs/v1/phase01-evidence-graph-data-model-detailed-design.md)
 - [V1 Phase 2 Detailed Design](docs/v1/phase02-layout-section-graph-detailed-design.md)
 - [V1 Phase 3 Detailed Design](docs/v1/phase03-hybrid-retrieval-index-detailed-design.md)
+- [V1 Phase 4 Detailed Design](docs/v1/phase04-graph-expansion-evidence-pack-detailed-design.md)
 - [V0 Phase 0 Detailed Design](docs/v0/phase00-project-skeleton-detailed-design.md)
 - [V0 Phase 1 Detailed Design](docs/v0/phase01-document-upload-detailed-design.md)
 - [V0 Phase 2 Detailed Design](docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md)
@@ -176,11 +177,12 @@ Phase 8 V0 demo polish and one-click preparation is complete:
 - Backend pipeline tests verify prepare-demo and follow-up question answering.
 - End-to-end smoke check confirms prepare-demo reaches `demo_ready` and questions return verified citations.
 
-## V1 Phase 1-3 Status
+## V1 Phase 1-4 Status
 
-V1 Phase 1-3 evidence graph and hybrid retrieval foundation is complete:
+V1 Phase 1-4 evidence graph, hybrid retrieval, and evidence pack foundation is complete:
 
 - Evidence graph edge model and graph APIs for build, summary, and node neighbors.
 - Layout graph enrichment with section, table cell, caption, and near relations.
 - Hybrid retrieval results with lexical, semantic fallback, metadata score breakdown, and candidate sources.
-- Backend graph and retrieval tests validate the new V1 foundation while preserving the V0 flow.
+- Evidence Pack API expands hybrid candidates through graph relations into answer-ready context.
+- Backend graph, retrieval, and evidence pack tests validate the new V1 foundation while preserving the V0 flow.

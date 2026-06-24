@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.document import DocumentResponse, DocumentStatusResponse
 from app.schemas.evidence import EvidenceNodeResponse
+from app.schemas.evidence_pack import EvidencePackResponse
 from app.schemas.agent import QuestionAnswerResponse, QuestionRequest
 from app.schemas.graph import DocumentGraphResponse, GraphBuildResponse, NodeNeighborsResponse
 from app.schemas.page import PageResponse
@@ -26,6 +27,7 @@ from app.services.evidence import (
     parse_document_tables,
     parse_document_text_blocks,
 )
+from app.services.evidence_pack import build_evidence_pack
 from app.services.graph import build_document_graph, get_node_neighbors, list_document_graph
 from app.services.pages import (
     get_page_image_path,
@@ -155,6 +157,27 @@ def graph_neighbors(
     db: Session = Depends(get_db),
 ) -> NodeNeighborsResponse:
     return get_node_neighbors(db, document_id, node_id)
+
+
+@router.get("/{document_id}/evidence-pack", response_model=EvidencePackResponse)
+def document_evidence_pack(
+    document_id: str,
+    query: str,
+    top_k: int = 3,
+    depth: int = 1,
+    node_types: str | None = None,
+    edge_types: str | None = None,
+    db: Session = Depends(get_db),
+) -> EvidencePackResponse:
+    return build_evidence_pack(
+        db,
+        document_id,
+        query=query,
+        top_k=top_k,
+        depth=depth,
+        node_types=node_types,
+        edge_types=edge_types,
+    )
 
 
 @router.post("/{document_id}/questions", response_model=QuestionAnswerResponse)
