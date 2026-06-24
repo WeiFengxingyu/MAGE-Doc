@@ -153,6 +153,27 @@ export type Verification = {
   tool_trace: ToolTrace;
 };
 
+export type ClaimVerificationItem = {
+  claim: string;
+  status: string;
+  citation_node_ids: string[];
+  reason: string;
+  matched_terms: string[];
+  missing_terms: string[];
+  required_node_types: string[];
+};
+
+export type ClaimVerification = {
+  status: string;
+  claim_count: number;
+  supported_count: number;
+  partial_count: number;
+  unsupported_count: number;
+  insufficient_evidence_count: number;
+  claims: ClaimVerificationItem[];
+  tool_trace: ToolTrace;
+};
+
 export type QuestionAnswerResponse = {
   trace_id: string | null;
   document_id: string;
@@ -162,6 +183,7 @@ export type QuestionAnswerResponse = {
   citations: Citation[];
   trace: ToolTrace[];
   verification: Verification;
+  claim_verification: ClaimVerification | null;
 };
 
 export type ToolDefinition = {

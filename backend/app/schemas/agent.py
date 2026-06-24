@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+from app.schemas.claim_verification import ClaimVerificationResponse
 from app.schemas.tools import ToolTraceResponse, VerifyAnswerResponse
 
 
@@ -24,3 +25,4 @@ class QuestionAnswerResponse(BaseModel):
     citations: list[CitationResponse]
     trace: list[ToolTraceResponse]
     verification: VerifyAnswerResponse
+    claim_verification: ClaimVerificationResponse | None = None

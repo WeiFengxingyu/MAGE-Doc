@@ -83,6 +83,7 @@ def test_tool_registry_lists_agent_tools(tmp_path: Path) -> None:
             "read_table",
             "verify_answer",
             "build_evidence_pack",
+            "verify_claims",
         }.issubset(tool_names)
     finally:
         _reset_client()
@@ -108,7 +109,7 @@ def test_question_trace_is_persisted_and_queryable(tmp_path: Path, monkeypatch) 
         traces = list_response.json()
         assert traces[0]["id"] == trace_id
         assert traces[0]["status"] == "completed"
-        assert traces[0]["tool_call_count"] == 3
+        assert traces[0]["tool_call_count"] == 4
 
         detail_response = client.get(f"/api/documents/{document['id']}/traces/{trace_id}")
         assert detail_response.status_code == 200
@@ -117,8 +118,9 @@ def test_question_trace_is_persisted_and_queryable(tmp_path: Path, monkeypatch) 
             "search_evidence",
             "read_table",
             "verify_answer",
+            "verify_claims",
         ]
-        assert [call["step_index"] for call in detail["tool_calls"]] == [1, 2, 3]
+        assert [call["step_index"] for call in detail["tool_calls"]] == [1, 2, 3, 4]
     finally:
         _reset_client()
 
@@ -139,6 +141,7 @@ def test_no_evidence_question_still_persists_verify_trace(tmp_path: Path, monkey
         detail = client.get(f"/api/documents/{document['id']}/traces/{trace_id}").json()
         assert detail["status"] == "completed"
         assert detail["metadata"]["result"] == "no_supporting_evidence"
-        assert detail["tool_calls"][-1]["tool_name"] == "verify_answer"
+        assert detail["metadata"]["claim_verification_status"] == "insufficient_evidence"
+        assert detail["tool_calls"][-1]["tool_name"] == "verify_claims"
     finally:
         _reset_client()

@@ -42,6 +42,22 @@ TOOL_REGISTRY: list[dict[str, Any]] = [
         "output_schema": {"items": "array", "summary": "object", "tool_trace": "object"},
         "phase": "V1 Phase 4",
     },
+    {
+        "name": "verify_claims",
+        "description": "Verify answer claims against citations and evidence terms.",
+        "input_schema": {
+            "answer": "string",
+            "citation_count": "integer",
+            "question_type": "string",
+        },
+        "output_schema": {
+            "status": "string",
+            "claims": "array",
+            "supported_count": "integer",
+            "unsupported_count": "integer",
+        },
+        "phase": "V1 Phase 6",
+    },
 ]
 
 

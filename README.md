@@ -28,6 +28,7 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V1 Phase 3 Detailed Design](docs/v1/phase03-hybrid-retrieval-index-detailed-design.md)
 - [V1 Phase 4 Detailed Design](docs/v1/phase04-graph-expansion-evidence-pack-detailed-design.md)
 - [V1 Phase 5 Detailed Design](docs/v1/phase05-tool-registry-trace-store-detailed-design.md)
+- [V1 Phase 6 Detailed Design](docs/v1/phase06-claim-verification-detailed-design.md)
 - [V0 Phase 0 Detailed Design](docs/v0/phase00-project-skeleton-detailed-design.md)
 - [V0 Phase 1 Detailed Design](docs/v0/phase01-document-upload-detailed-design.md)
 - [V0 Phase 2 Detailed Design](docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md)
@@ -178,13 +179,14 @@ Phase 8 V0 demo polish and one-click preparation is complete:
 - Backend pipeline tests verify prepare-demo and follow-up question answering.
 - End-to-end smoke check confirms prepare-demo reaches `demo_ready` and questions return verified citations.
 
-## V1 Phase 1-5 Status
+## V1 Phase 1-6 Status
 
-V1 Phase 1-5 evidence graph, hybrid retrieval, evidence pack, and trace runtime foundation is complete:
+V1 Phase 1-6 evidence graph, hybrid retrieval, evidence pack, trace runtime, and claim verification foundation is complete:
 
 - Evidence graph edge model and graph APIs for build, summary, and node neighbors.
 - Layout graph enrichment with section, table cell, caption, and near relations.
 - Hybrid retrieval results with lexical, semantic fallback, metadata score breakdown, and candidate sources.
 - Evidence Pack API expands hybrid candidates through graph relations into answer-ready context.
 - Tool Registry documents available Agent tools and Trace Store persists question runs and tool calls.
-- Backend graph, retrieval, evidence pack, agent, and trace tests validate the new V1 foundation while preserving the V0 flow.
+- Claim Verification splits answers into verifiable claims and labels supported, partial, unsupported, or insufficient evidence.
+- Backend graph, retrieval, evidence pack, agent, trace, and claim verification tests validate the new V1 foundation while preserving the V0 flow.

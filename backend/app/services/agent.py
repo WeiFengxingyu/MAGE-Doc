@@ -5,6 +5,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.services.documents import get_document
+from app.services.claim_verification import verify_claims
 from app.services.retrieval import (
     inspect_page_tool,
     read_table_tool,
@@ -84,6 +85,7 @@ def _empty_answer(
     question_type: str,
     trace: list[dict],
     verification: dict,
+    claim_verification: dict,
 ) -> dict:
     return {
         "trace_id": trace_id,
@@ -94,6 +96,7 @@ def _empty_answer(
         "citations": [],
         "trace": trace,
         "verification": verification,
+        "claim_verification": claim_verification,
     }
 
 
@@ -179,11 +182,30 @@ def answer_question(db: Session, document_id: str, question: str) -> dict:
                 trace=trace,
                 payload=verification,
             )
+            claim_verification = verify_claims(
+                db,
+                document_id,
+                answer="",
+                citations=[],
+                question_type=question_type,
+            )
+            _append_trace(
+                db,
+                document_id=document_id,
+                trace_run_id=trace_run.id,
+                trace=trace,
+                payload=claim_verification,
+            )
             complete_trace_run(
                 db,
                 trace_run.id,
                 answer="",
-                metadata={"result": "no_supporting_evidence"},
+                metadata={
+                    "result": "no_supporting_evidence",
+                    "claim_verification_status": claim_verification["status"],
+                    "claim_count": claim_verification["claim_count"],
+                    "unsupported_count": claim_verification["unsupported_count"],
+                },
             )
             return _empty_answer(
                 trace_run.id,
@@ -192,6 +214,7 @@ def answer_question(db: Session, document_id: str, question: str) -> dict:
                 question_type,
                 trace,
                 verification,
+                claim_verification,
             )
 
         top_result = results[0]
@@ -242,6 +265,20 @@ def answer_question(db: Session, document_id: str, question: str) -> dict:
             trace=trace,
             payload=verification,
         )
+        claim_verification = verify_claims(
+            db,
+            document_id,
+            answer=answer,
+            citations=citations,
+            question_type=question_type,
+        )
+        _append_trace(
+            db,
+            document_id=document_id,
+            trace_run_id=trace_run.id,
+            trace=trace,
+            payload=claim_verification,
+        )
         complete_trace_run(
             db,
             trace_run.id,
@@ -250,6 +287,9 @@ def answer_question(db: Session, document_id: str, question: str) -> dict:
                 "result": "answered",
                 "citation_count": len(citations),
                 "verification_passed": verification["passed"],
+                "claim_verification_status": claim_verification["status"],
+                "claim_count": claim_verification["claim_count"],
+                "unsupported_count": claim_verification["unsupported_count"],
             },
         )
 
@@ -262,6 +302,7 @@ def answer_question(db: Session, document_id: str, question: str) -> dict:
             "citations": citations,
             "trace": trace,
             "verification": verification,
+            "claim_verification": claim_verification,
         }
     except Exception as exc:
         fail_trace_run(db, trace_run.id, error=str(exc))

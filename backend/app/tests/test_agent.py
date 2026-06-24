@@ -96,10 +96,13 @@ def test_table_question_runs_agentic_rag_loop(tmp_path: Path, monkeypatch) -> No
         assert payload["citations"][0]["node_type"] == "table"
         assert "Revenue | 100 | 128" in payload["answer"]
         assert payload["verification"]["passed"] is True
+        assert payload["claim_verification"]["status"] in {"supported", "partial"}
+        assert payload["claim_verification"]["claim_count"] >= 1
         assert [trace["tool_name"] for trace in payload["trace"]] == [
             "search_evidence",
             "read_table",
             "verify_answer",
+            "verify_claims",
         ]
     finally:
         _reset_client()
@@ -123,10 +126,12 @@ def test_text_question_runs_agentic_rag_loop(tmp_path: Path, monkeypatch) -> Non
         assert payload["citations"][0]["node_type"] == "text_block"
         assert "enterprise demand" in payload["answer"].lower()
         assert payload["verification"]["passed"] is True
+        assert payload["claim_verification"]["status"] == "supported"
         assert [trace["tool_name"] for trace in payload["trace"]] == [
             "search_evidence",
             "inspect_page",
             "verify_answer",
+            "verify_claims",
         ]
     finally:
         _reset_client()
@@ -168,6 +173,7 @@ def test_question_without_matching_evidence_returns_empty_citations(
         assert payload["trace_id"]
         assert payload["citations"] == []
         assert payload["verification"]["passed"] is False
-        assert payload["trace"][-1]["tool_name"] == "verify_answer"
+        assert payload["claim_verification"]["status"] == "insufficient_evidence"
+        assert payload["trace"][-1]["tool_name"] == "verify_claims"
     finally:
         _reset_client()
