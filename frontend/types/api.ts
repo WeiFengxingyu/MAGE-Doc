@@ -154,6 +154,7 @@ export type Verification = {
 };
 
 export type QuestionAnswerResponse = {
+  trace_id: string | null;
   document_id: string;
   question: string;
   question_type: "table_lookup" | "text_lookup";
@@ -161,6 +162,45 @@ export type QuestionAnswerResponse = {
   citations: Citation[];
   trace: ToolTrace[];
   verification: Verification;
+};
+
+export type ToolDefinition = {
+  name: string;
+  description: string;
+  input_schema: Record<string, unknown>;
+  output_schema: Record<string, unknown>;
+  phase: string;
+};
+
+export type AgentToolCall = {
+  id: string;
+  trace_run_id: string;
+  document_id: string;
+  step_index: number;
+  tool_name: string;
+  input: Record<string, unknown>;
+  output_summary: string;
+  latency_ms: number;
+  status: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+
+export type AgentTraceRunSummary = {
+  id: string;
+  document_id: string;
+  question: string;
+  question_type: string;
+  status: string;
+  answer_preview: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  tool_call_count: number;
+};
+
+export type AgentTraceRunDetail = AgentTraceRunSummary & {
+  tool_calls: AgentToolCall[];
 };
 
 export type AskState = {

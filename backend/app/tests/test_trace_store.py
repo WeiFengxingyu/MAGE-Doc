@@ -39,17 +39,11 @@ def _draw_table(page: fitz.Page, x0: float, y0: float) -> None:
     ys = [y0]
     for height in row_heights:
         ys.append(ys[-1] + height)
-
     for x in xs:
         page.draw_line((x, ys[0]), (x, ys[-1]), color=(0, 0, 0), width=0.8)
     for y in ys:
         page.draw_line((xs[0], y), (xs[-1], y), color=(0, 0, 0), width=0.8)
-
-    values = [
-        ["Metric", "2025", "2026"],
-        ["Revenue", "100", "128"],
-        ["Margin", "18%", "22%"],
-    ]
+    values = [["Metric", "2025", "2026"], ["Revenue", "100", "128"], ["Margin", "18%", "22%"]]
     for row_index, row in enumerate(values):
         for col_index, text in enumerate(row):
             page.insert_text((xs[col_index] + 6, ys[row_index] + 18), text, fontsize=10)
@@ -60,15 +54,13 @@ def _sample_pdf_bytes() -> bytes:
     first = pdf.new_page(width=420, height=320)
     first.insert_text((60, 50), "Revenue increased because enterprise demand improved.")
     _draw_table(first, 60, 95)
-    second = pdf.new_page(width=420, height=320)
-    second.insert_text((60, 50), "Risk factors include supply chain delays.")
     return pdf.tobytes()
 
 
 def _upload_and_parse(client: TestClient) -> dict:
     response = client.post(
         "/api/documents",
-        files={"file": ("agent.pdf", _sample_pdf_bytes(), "application/pdf")},
+        files={"file": ("trace.pdf", _sample_pdf_bytes(), "application/pdf")},
     )
     assert response.status_code == 201
     document = response.json()
@@ -78,7 +70,25 @@ def _upload_and_parse(client: TestClient) -> dict:
     return document
 
 
-def test_table_question_runs_agentic_rag_loop(tmp_path: Path, monkeypatch) -> None:
+def test_tool_registry_lists_agent_tools(tmp_path: Path) -> None:
+    client = _client(tmp_path)
+    try:
+        response = client.get("/api/tools")
+        assert response.status_code == 200
+        tools = response.json()
+        tool_names = {tool["name"] for tool in tools}
+        assert {
+            "search_evidence",
+            "inspect_page",
+            "read_table",
+            "verify_answer",
+            "build_evidence_pack",
+        }.issubset(tool_names)
+    finally:
+        _reset_client()
+
+
+def test_question_trace_is_persisted_and_queryable(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr("app.services.documents.settings.upload_root", tmp_path / "uploads")
     monkeypatch.setattr("app.services.pages.settings.page_image_root", tmp_path / "page-images")
     client = _client(tmp_path)
@@ -88,71 +98,32 @@ def test_table_question_runs_agentic_rag_loop(tmp_path: Path, monkeypatch) -> No
             f"/api/documents/{document['id']}/questions",
             json={"question": "What was revenue in 2026?"},
         )
-
         assert response.status_code == 200
-        payload = response.json()
-        assert payload["trace_id"]
-        assert payload["question_type"] == "table_lookup"
-        assert payload["citations"][0]["node_type"] == "table"
-        assert "Revenue | 100 | 128" in payload["answer"]
-        assert payload["verification"]["passed"] is True
-        assert [trace["tool_name"] for trace in payload["trace"]] == [
+        answer = response.json()
+        trace_id = answer["trace_id"]
+        assert trace_id
+
+        list_response = client.get(f"/api/documents/{document['id']}/traces")
+        assert list_response.status_code == 200
+        traces = list_response.json()
+        assert traces[0]["id"] == trace_id
+        assert traces[0]["status"] == "completed"
+        assert traces[0]["tool_call_count"] == 3
+
+        detail_response = client.get(f"/api/documents/{document['id']}/traces/{trace_id}")
+        assert detail_response.status_code == 200
+        detail = detail_response.json()
+        assert [call["tool_name"] for call in detail["tool_calls"]] == [
             "search_evidence",
             "read_table",
             "verify_answer",
         ]
+        assert [call["step_index"] for call in detail["tool_calls"]] == [1, 2, 3]
     finally:
         _reset_client()
 
 
-def test_text_question_runs_agentic_rag_loop(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setattr("app.services.documents.settings.upload_root", tmp_path / "uploads")
-    monkeypatch.setattr("app.services.pages.settings.page_image_root", tmp_path / "page-images")
-    client = _client(tmp_path)
-    try:
-        document = _upload_and_parse(client)
-        response = client.post(
-            f"/api/documents/{document['id']}/questions",
-            json={"question": "What explains enterprise demand?"},
-        )
-
-        assert response.status_code == 200
-        payload = response.json()
-        assert payload["trace_id"]
-        assert payload["question_type"] == "text_lookup"
-        assert payload["citations"][0]["node_type"] == "text_block"
-        assert "enterprise demand" in payload["answer"].lower()
-        assert payload["verification"]["passed"] is True
-        assert [trace["tool_name"] for trace in payload["trace"]] == [
-            "search_evidence",
-            "inspect_page",
-            "verify_answer",
-        ]
-    finally:
-        _reset_client()
-
-
-def test_question_requires_text(tmp_path: Path, monkeypatch) -> None:
-    monkeypatch.setattr("app.services.documents.settings.upload_root", tmp_path / "uploads")
-    monkeypatch.setattr("app.services.pages.settings.page_image_root", tmp_path / "page-images")
-    client = _client(tmp_path)
-    try:
-        document = _upload_and_parse(client)
-        response = client.post(
-            f"/api/documents/{document['id']}/questions",
-            json={"question": " "},
-        )
-
-        assert response.status_code == 400
-        assert response.json()["detail"] == "Question is required"
-    finally:
-        _reset_client()
-
-
-def test_question_without_matching_evidence_returns_empty_citations(
-    tmp_path: Path,
-    monkeypatch,
-) -> None:
+def test_no_evidence_question_still_persists_verify_trace(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setattr("app.services.documents.settings.upload_root", tmp_path / "uploads")
     monkeypatch.setattr("app.services.pages.settings.page_image_root", tmp_path / "page-images")
     client = _client(tmp_path)
@@ -162,12 +133,12 @@ def test_question_without_matching_evidence_returns_empty_citations(
             f"/api/documents/{document['id']}/questions",
             json={"question": "unfindable xenoterm"},
         )
-
         assert response.status_code == 200
-        payload = response.json()
-        assert payload["trace_id"]
-        assert payload["citations"] == []
-        assert payload["verification"]["passed"] is False
-        assert payload["trace"][-1]["tool_name"] == "verify_answer"
+        trace_id = response.json()["trace_id"]
+
+        detail = client.get(f"/api/documents/{document['id']}/traces/{trace_id}").json()
+        assert detail["status"] == "completed"
+        assert detail["metadata"]["result"] == "no_supporting_evidence"
+        assert detail["tool_calls"][-1]["tool_name"] == "verify_answer"
     finally:
         _reset_client()

@@ -16,6 +16,7 @@ class CitationResponse(BaseModel):
 
 
 class QuestionAnswerResponse(BaseModel):
+    trace_id: str | None = None
     document_id: str
     question: str
     question_type: str

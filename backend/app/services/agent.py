@@ -11,6 +11,12 @@ from app.services.retrieval import (
     search_evidence,
     verify_answer_tool,
 )
+from app.services.trace_store import (
+    complete_trace_run,
+    create_trace_run,
+    fail_trace_run,
+    record_tool_call,
+)
 
 TABLE_KEYWORDS = {
     "revenue",
@@ -72,6 +78,7 @@ def _row_text(row: list[str | None]) -> str:
 
 
 def _empty_answer(
+    trace_id: str,
     document_id: str,
     question: str,
     question_type: str,
@@ -79,6 +86,7 @@ def _empty_answer(
     verification: dict,
 ) -> dict:
     return {
+        "trace_id": trace_id,
         "document_id": document_id,
         "question": question,
         "question_type": question_type,
@@ -89,10 +97,24 @@ def _empty_answer(
     }
 
 
-def _append_trace(trace: list[dict], payload: dict) -> None:
+def _append_trace(
+    db: Session,
+    *,
+    document_id: str,
+    trace_run_id: str,
+    trace: list[dict],
+    payload: dict,
+) -> None:
     tool_trace = payload.get("tool_trace")
     if isinstance(tool_trace, dict):
         trace.append(tool_trace)
+        record_tool_call(
+            db,
+            trace_run_id=trace_run_id,
+            document_id=document_id,
+            step_index=len(trace),
+            tool_trace=tool_trace,
+        )
 
 
 def answer_question(db: Session, document_id: str, question: str) -> dict:
@@ -105,71 +127,142 @@ def answer_question(db: Session, document_id: str, question: str) -> dict:
     get_document(db, document_id)
 
     question_type = _classify_question(clean_question)
+    trace_run = create_trace_run(
+        db,
+        document_id=document_id,
+        question=clean_question,
+        question_type=question_type,
+        metadata={"agent": "deterministic_v1_phase5"},
+    )
     primary_node_types = "table" if question_type == "table_lookup" else "text_block"
     trace: list[dict] = []
 
-    search_payload = search_evidence(
-        db,
-        document_id,
-        query=clean_question,
-        top_k=3,
-        node_types=primary_node_types,
-    )
-    _append_trace(trace, search_payload)
-    results = search_payload["results"]
-    if not results:
-        fallback_payload = search_evidence(
+    try:
+        search_payload = search_evidence(
             db,
             document_id,
             query=clean_question,
             top_k=3,
-            node_types=None,
+            node_types=primary_node_types,
         )
-        _append_trace(trace, fallback_payload)
-        results = fallback_payload["results"]
-
-    if not results:
-        verification = verify_answer_tool(db, document_id, answer="", citation_node_ids=[])
-        _append_trace(trace, verification)
-        return _empty_answer(document_id, clean_question, question_type, trace, verification)
-
-    top_result = results[0]
-    top_node = top_result["node"]
-    citations: list[dict] = []
-
-    if top_node["node_type"] == "table":
-        table_payload = read_table_tool(db, document_id, top_node["id"])
-        _append_trace(trace, table_payload)
-        row = _select_table_row(table_payload["matrix"], clean_question)
-        table_snippet = _row_text(row) if row else top_result["snippet"]
-        answer = (
-            f"Based on table evidence on page {top_node['page_number']}, "
-            f"the most relevant row is: {table_snippet}."
+        _append_trace(
+            db,
+            document_id=document_id,
+            trace_run_id=trace_run.id,
+            trace=trace,
+            payload=search_payload,
         )
-        citations.append(_citation_from_result(top_result, table_snippet))
-    else:
-        page_payload = inspect_page_tool(db, document_id, top_node["page_number"])
-        _append_trace(trace, page_payload)
-        answer = (
-            f"Based on text evidence on page {top_node['page_number']}, "
-            f"{top_result['snippet']}"
+        results = search_payload["results"]
+        if not results:
+            fallback_payload = search_evidence(
+                db,
+                document_id,
+                query=clean_question,
+                top_k=3,
+                node_types=None,
+            )
+            _append_trace(
+                db,
+                document_id=document_id,
+                trace_run_id=trace_run.id,
+                trace=trace,
+                payload=fallback_payload,
+            )
+            results = fallback_payload["results"]
+
+        if not results:
+            verification = verify_answer_tool(db, document_id, answer="", citation_node_ids=[])
+            _append_trace(
+                db,
+                document_id=document_id,
+                trace_run_id=trace_run.id,
+                trace=trace,
+                payload=verification,
+            )
+            complete_trace_run(
+                db,
+                trace_run.id,
+                answer="",
+                metadata={"result": "no_supporting_evidence"},
+            )
+            return _empty_answer(
+                trace_run.id,
+                document_id,
+                clean_question,
+                question_type,
+                trace,
+                verification,
+            )
+
+        top_result = results[0]
+        top_node = top_result["node"]
+        citations: list[dict] = []
+
+        if top_node["node_type"] == "table":
+            table_payload = read_table_tool(db, document_id, top_node["id"])
+            _append_trace(
+                db,
+                document_id=document_id,
+                trace_run_id=trace_run.id,
+                trace=trace,
+                payload=table_payload,
+            )
+            row = _select_table_row(table_payload["matrix"], clean_question)
+            table_snippet = _row_text(row) if row else top_result["snippet"]
+            answer = (
+                f"Based on table evidence on page {top_node['page_number']}, "
+                f"the most relevant row is: {table_snippet}."
+            )
+            citations.append(_citation_from_result(top_result, table_snippet))
+        else:
+            page_payload = inspect_page_tool(db, document_id, top_node["page_number"])
+            _append_trace(
+                db,
+                document_id=document_id,
+                trace_run_id=trace_run.id,
+                trace=trace,
+                payload=page_payload,
+            )
+            answer = (
+                f"Based on text evidence on page {top_node['page_number']}, "
+                f"{top_result['snippet']}"
+            )
+            citations.append(_citation_from_result(top_result))
+
+        verification = verify_answer_tool(
+            db,
+            document_id,
+            answer=answer,
+            citation_node_ids=[citation["node_id"] for citation in citations],
         )
-        citations.append(_citation_from_result(top_result))
+        _append_trace(
+            db,
+            document_id=document_id,
+            trace_run_id=trace_run.id,
+            trace=trace,
+            payload=verification,
+        )
+        complete_trace_run(
+            db,
+            trace_run.id,
+            answer=answer,
+            metadata={
+                "result": "answered",
+                "citation_count": len(citations),
+                "verification_passed": verification["passed"],
+            },
+        )
 
-    verification = verify_answer_tool(
-        db,
-        document_id,
-        answer=answer,
-        citation_node_ids=[citation["node_id"] for citation in citations],
-    )
-    _append_trace(trace, verification)
-
-    return {
-        "document_id": document_id,
-        "question": clean_question,
-        "question_type": question_type,
-        "answer": answer,
-        "citations": citations,
-        "trace": trace,
-        "verification": verification,
-    }
+        return {
+            "trace_id": trace_run.id,
+            "document_id": document_id,
+            "question": clean_question,
+            "question_type": question_type,
+            "answer": answer,
+            "citations": citations,
+            "trace": trace,
+            "verification": verification,
+        }
+    except Exception as exc:
+        fail_trace_run(db, trace_run.id, error=str(exc))
+        raise

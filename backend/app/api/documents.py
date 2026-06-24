@@ -10,6 +10,7 @@ from app.schemas.agent import QuestionAnswerResponse, QuestionRequest
 from app.schemas.graph import DocumentGraphResponse, GraphBuildResponse, NodeNeighborsResponse
 from app.schemas.page import PageResponse
 from app.schemas.pipeline import PrepareDemoResponse
+from app.schemas.trace import AgentTraceRunDetailResponse, AgentTraceRunSummaryResponse
 from app.schemas.tools import (
     InspectPageResponse,
     ReadTableResponse,
@@ -42,6 +43,7 @@ from app.services.retrieval import (
     search_evidence,
     verify_answer_tool,
 )
+from app.services.trace_store import get_trace_run_detail, list_trace_runs
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
@@ -178,6 +180,23 @@ def document_evidence_pack(
         node_types=node_types,
         edge_types=edge_types,
     )
+
+
+@router.get("/{document_id}/traces", response_model=list[AgentTraceRunSummaryResponse])
+def document_traces(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> list[AgentTraceRunSummaryResponse]:
+    return list_trace_runs(db, document_id)
+
+
+@router.get("/{document_id}/traces/{trace_id}", response_model=AgentTraceRunDetailResponse)
+def document_trace_detail(
+    document_id: str,
+    trace_id: str,
+    db: Session = Depends(get_db),
+) -> AgentTraceRunDetailResponse:
+    return get_trace_run_detail(db, document_id, trace_id)
 
 
 @router.post("/{document_id}/questions", response_model=QuestionAnswerResponse)

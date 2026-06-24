@@ -33,7 +33,7 @@ Batch 2 - Evidence Graph Agentic RAG planning。
 | Phase 2 | Layout 关系与 Section 构建 | 已完成 |
 | Phase 3 | Hybrid Retrieval Index | 已完成 |
 | Phase 4 | Graph Expansion 与 Evidence Pack | 已完成 |
-| Phase 5 | Tool Registry 与 Trace Store | 待开始 |
+| Phase 5 | Tool Registry 与 Trace Store | 已完成 |
 | Phase 6 | Claim Verification | 待开始 |
 | Phase 7 | Evaluation Harness | 待开始 |
 | Phase 8 | V1 Workbench Polish | 待开始 |
@@ -137,3 +137,44 @@ V1 Phase 4 - Graph Expansion 与 Evidence Pack 已按“详细设计 -> 实现 -
 进入 V1 Phase 5：Tool Registry 与 Trace Store。
 
 Phase 5 必须先写 `docs/v1/phase05-tool-registry-trace-store-detailed-design.md`，再把工具 schema、tool call 持久化和 trace API 做成 Agent runtime 的基础设施。
+
+## 2026-06-24：Phase 5 闭环
+
+### 当前阶段
+
+V1 Phase 5 - Tool Registry 与 Trace Store 已按“详细设计 -> 实现 -> 验证 -> 记录”的工作流完成。
+
+### 详细设计
+
+- 新增 `docs/v1/phase05-tool-registry-trace-store-detailed-design.md`。
+- 明确工具注册表、trace run、tool call、trace 查询 API 和 Agent 接入策略。
+
+### 实现摘要
+
+- 新增 `AgentTraceRun` 和 `AgentToolCall` 数据模型。
+- 新增 `backend/app/services/tool_registry.py`，静态注册当前 Agent 工具：
+  - `search_evidence`
+  - `inspect_page`
+  - `read_table`
+  - `verify_answer`
+  - `build_evidence_pack`
+- 新增 `backend/app/services/trace_store.py`，支持 trace run 创建、tool call 记录、完成/失败状态更新、列表和详情查询。
+- 新增 `GET /api/tools`。
+- 新增 trace API：
+  - `GET /api/documents/{document_id}/traces`
+  - `GET /api/documents/{document_id}/traces/{trace_id}`
+- `POST /api/documents/{document_id}/questions` 响应新增 `trace_id`，原有 `trace` 数组保持兼容。
+- 每次 deterministic Agent 调用工具时同步持久化 tool call。
+- 前端 API 类型新增 Tool Registry 和 Trace Store 相关类型。
+
+### 验证记录
+
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests\test_trace_store.py backend\app\tests\test_agent.py`：7 passed，1 warning。
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests`：32 passed，1 warning。
+- `npm run build`：Next.js production build 通过。
+
+### 下一步
+
+进入 V1 Phase 6：Claim Verification。
+
+Phase 6 必须先写 `docs/v1/phase06-claim-verification-detailed-design.md`，再把答案拆解为 claims，并基于 evidence pack、citation 和 trace 输出 supported / partial / unsupported。
