@@ -26,6 +26,10 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V0 Phase 3 Detailed Design](docs/v0/phase03-text-block-parsing-detailed-design.md)
 - [V0 Phase 4 Detailed Design](docs/v0/phase04-table-parsing-detailed-design.md)
 - [V0 Phase 5 Detailed Design](docs/v0/phase05-retrieval-tools-detailed-design.md)
+- [V0 Phase 6 Detailed Design](docs/v0/phase06-agentic-rag-loop-detailed-design.md)
+- [V0 Phase 7 Detailed Design](docs/v0/phase07-qa-citation-highlight-detailed-design.md)
+- [V0 Phase 8 Detailed Design](docs/v0/phase08-v0-demo-polish-detailed-design.md)
+- [V0 Demo Runbook](docs/v0/v0-demo-runbook.md)
 - [V0 Batch 1 Worklog](docs/v0/batch1-worklog.md)
 
 ## Quick Start
@@ -128,3 +132,40 @@ Phase 5 basic retrieval and tool layer is complete:
 - Frontend retrieval panel with scope selection and evidence result cards.
 - Backend retrieval tests with generated text/table PDFs.
 - End-to-end smoke check across upload, render, parse, search, and trace response.
+
+## Phase 6 Status
+
+Phase 6 V0 Agentic RAG loop is complete:
+
+- Deterministic local workflow agent over the Phase 5 tool layer.
+- Lightweight question classification for table lookup and text lookup.
+- Tool plans for `search_evidence -> read_table -> verify_answer` and `search_evidence -> inspect_page -> verify_answer`.
+- Answer responses with citations, page numbers, bbox, node ids, trace, and verification.
+- Question API at `POST /api/documents/{document_id}/questions`.
+- Frontend Ask panel with answer, citation, trace, and verification display.
+- Backend agent tests with generated text/table PDFs.
+- End-to-end smoke check across upload, render, parse, ask, cite, trace, and verify.
+
+## Phase 7 Status
+
+Phase 7 frontend QA citation highlighting is complete:
+
+- Client-side document workbench for shared citation selection state.
+- Ask panel citations are clickable and show active selection styling.
+- Page viewer switches to the selected citation page.
+- Selected citation bbox is highlighted over the rendered PDF page.
+- Page viewer keeps text and table overlays while adding citation highlight.
+- Frontend build validates the interaction wiring.
+- Backend regression tests remain green.
+
+## Phase 8 Status
+
+Phase 8 V0 demo polish and one-click preparation is complete:
+
+- Prepare-demo pipeline API runs page rendering, text parsing, and table parsing in one request.
+- Document status supports `preparing_demo` and `demo_ready`.
+- Frontend document cards include a primary `Prepare demo` action.
+- Demo-ready documents show a guided workbench notice.
+- V0 demo runbook documents the full upload, prepare, ask, cite, and highlight flow.
+- Backend pipeline tests verify prepare-demo and follow-up question answering.
+- End-to-end smoke check confirms prepare-demo reaches `demo_ready` and questions return verified citations.

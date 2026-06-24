@@ -1,4 +1,9 @@
-import { parseTablesAction, parseTextBlocksAction, renderDocumentAction } from "@/app/actions";
+import {
+  parseTablesAction,
+  parseTextBlocksAction,
+  prepareDemoAction,
+  renderDocumentAction,
+} from "@/app/actions";
 import type { DocumentRecord } from "@/types/api";
 
 function formatBytes(value: number): string {
@@ -46,6 +51,12 @@ export function DocumentList({ documents }: { documents: DocumentRecord[] }) {
               {document.status}
             </span>
             <time dateTime={document.created_at}>{formatDate(document.created_at)}</time>
+            <form action={prepareDemoAction}>
+              <input name="document_id" type="hidden" value={document.id} />
+              <button className="mini-button mini-button-primary" type="submit">
+                Prepare demo
+              </button>
+            </form>
             <form action={renderDocumentAction}>
               <input name="document_id" type="hidden" value={document.id} />
               <button className="mini-button" type="submit">

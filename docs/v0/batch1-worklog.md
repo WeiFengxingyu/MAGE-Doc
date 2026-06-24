@@ -461,3 +461,236 @@ Compiled successfully
 ### 下一步
 
 进入 Phase 6：V0 Agentic RAG 闭环。开始前先创建 `docs/v0/phase06-agentic-rag-loop-detailed-design.md`。
+
+## 2026-06-24 Phase 6
+
+### 当前阶段
+
+Phase 6：V0 Agentic RAG 闭环。
+
+### Phase 6 设计摘要
+
+Phase 6 在 Phase 5 的工具层之上实现一个确定性 V0 Agent workflow。系统对问题做轻量分类，按计划调用 `search_evidence`、`inspect_page`、`read_table`、`verify_answer`，输出 answer、citations 和 trace。
+
+### 关键决策
+
+- V0 不调用外部 LLM，先用确定性 workflow agent 保证本地可运行和可测试。
+- 表格型问题优先 table evidence，文本型问题优先 text_block evidence。
+- 引用校验必须调用 Phase 5 的 `verify_answer`。
+- Phase 6 不做 citation 点击跳转和高亮联动，留到 Phase 7。
+
+### 实现记录
+
+- 后端新增 Agent schema：
+  - `backend/app/schemas/agent.py`
+  - `QuestionRequest`
+  - `CitationResponse`
+  - `QuestionAnswerResponse`
+- 后端新增 Agent workflow service：
+  - `backend/app/services/agent.py`
+  - 规则分类 `table_lookup` / `text_lookup`。
+  - 表格问题调用 `search_evidence -> read_table -> verify_answer`。
+  - 文本问题调用 `search_evidence -> inspect_page -> verify_answer`。
+  - 无结果时返回空 citation，并通过 verify 标记不通过。
+- 后端新增 API：
+  - `POST /api/documents/{document_id}/questions`
+- 后端新增测试：
+  - `backend/app/tests/test_agent.py`
+  - 覆盖表格问题、文本问题、空问题和无证据问题。
+- 前端新增：
+  - `QuestionAnswerResponse`、`Citation`、`Verification`、`AskState` 类型。
+  - `askQuestion` API helper。
+  - `askQuestionAction` server action。
+  - `AskPanel` 问答面板，展示 answer、citations、trace 和 verification 状态。
+  - 页面状态更新为 Phase 6，当前范围显示为 Agentic RAG answer with citations。
+
+### 验证记录
+
+- 后端测试通过：
+
+```text
+.venv\Scripts\python.exe -m pytest
+23 passed, 1 warning
+```
+
+- 前端构建通过：
+
+```text
+npm run build
+Compiled successfully
+```
+
+- Agent smoke 通过：
+  - 生成 1 页含正文和表格的 PDF。
+  - 上传、渲染、解析文本、解析表格。
+  - 提问 `What was revenue in 2026?`
+  - 返回 `question_type=table_lookup`。
+  - answer 为 `Based on table evidence on page 1, the most relevant row is: Revenue | 100 | 128.`
+  - citation count 为 1，citation type 为 `table`。
+  - trace tools 为 `["search_evidence", "read_table", "verify_answer"]`。
+  - verification passed 为 `True`。
+
+### 遗留问题
+
+- V0 Agent 使用确定性模板答案，不调用 LLM，语言表达能力有限。
+- 问题分类和表格行选择是规则型，复杂问题需要 Phase 7/V1 的 planner 和 generator 增强。
+- 当前 question 和 tool trace 未持久化到数据库，后续可引入 `questions` 和 `tool_calls` 表。
+- 前端 citation 点击跳转、高亮 evidence bbox 留到 Phase 7。
+
+### 下一步
+
+进入 Phase 7：前端问答与引用高亮。开始前先创建 `docs/v0/phase07-qa-citation-highlight-detailed-design.md`。
+
+## 2026-06-24 Phase 7
+
+### 当前阶段
+
+Phase 7：前端问答与引用高亮。
+
+### Phase 7 设计摘要
+
+Phase 7 将 Phase 6 的 answer/citations 结果升级为可交互证据定位体验。用户点击 Ask 面板中的 citation 后，PageViewer 自动切换到 citation 所在页，并用高亮 bbox 标出证据位置。
+
+### 关键决策
+
+- Phase 7 不新增后端 Agent 能力，聚焦前端引用定位闭环。
+- 新增 client-side `DocumentWorkbench` 管理 selected citation 状态。
+- `PageViewer` 升级为 client component，支持 citation page 切换和 bbox highlight。
+- 只支持单 citation 高亮，多 citation 联动留到后续版本。
+
+### 实现记录
+
+- 前端新增 `DocumentWorkbench`：
+  - `frontend/components/document-workbench.tsx`
+  - 管理 `selectedCitation` client state。
+  - 组合 `PageViewer`、`AskPanel` 和 `RetrievalPanel`。
+- `AskPanel` citation 交互增强：
+  - citation item 改为可点击 button。
+  - 点击后调用 `onCitationSelect`。
+  - 当前 citation 增加 active 样式。
+- `PageViewer` 升级为 client component：
+  - 接收 `selectedCitation`。
+  - 根据 citation page number 切换 active page。
+  - 按 active page 动态加载 text blocks 和 tables。
+  - 使用 citation bbox 绘制 selected citation highlight。
+- 首页组合方式调整：
+  - `DocumentWorkbenchAsync` 在 server 侧加载 active document、pages、第一页 evidence。
+  - client 侧接管 Ask/Page/Retrieval 的交互联动。
+- 样式新增：
+  - `.citation-button`
+  - `.citation-button-active`
+  - `.selected-citation-banner`
+  - `.selected-citation-bbox`
+
+### 验证记录
+
+- 后端测试通过：
+
+```text
+.venv\Scripts\python.exe -m pytest
+23 passed, 1 warning
+```
+
+- 前端构建通过：
+
+```text
+npm run build
+Compiled successfully
+```
+
+- 交互路径 smoke 通过：
+  - `AskPanel` citation button 调用 `onCitationSelect`。
+  - `DocumentWorkbench` 持有 `selectedCitation` 并传递给 `PageViewer`。
+  - `PageViewer` 根据 `selectedCitation.page_number` 调用 `setActivePageNumber`。
+  - `PageViewer` 使用 `selectedCitation.bbox` 绘制 `.selected-citation-bbox`。
+
+### 遗留问题
+
+- 当前仅支持单 citation 高亮，多 citation 同时高亮留到后续版本。
+- citation 选中状态只在前端内存中维护，不持久化也不进入 URL。
+- 目前没有完整翻页控件，只通过 citation 驱动页面切换。
+- 前端未做 Playwright 浏览器截图验证，当前以 TypeScript build 和代码路径 smoke 作为 Phase 7 验证。
+
+### 下一步
+
+V0 Batch 1 的核心演示链路已形成。下一步可进入 Phase 8/V0 polish，或进入 Batch 2：Evidence Graph V1。
+
+## 2026-06-24 Phase 8
+
+### 当前阶段
+
+Phase 8：V0 Demo Polish 与一键准备。
+
+### Phase 8 设计摘要
+
+Phase 8 将 V0 的多步骤演示整理成更顺滑的 demo workflow。用户上传 PDF 后点击 `Prepare demo`，系统串行完成页面渲染、文本块解析和表格解析，然后进入 `demo_ready` 状态，可直接提问、查看 citation、点击 citation 高亮页面 bbox。
+
+### 关键决策
+
+- 新增同步 `prepare-demo` API，不引入后台队列。
+- `Prepare demo` 会重新执行 render/text parse/table parse，保证 demo 状态稳定。
+- 文档状态新增 `preparing_demo` 和 `demo_ready`。
+- 新增 V0 demo runbook，方便简历展示和面试演示。
+
+### 实现记录
+
+- 后端新增 pipeline schema：
+  - `backend/app/schemas/pipeline.py`
+  - `PrepareDemoResponse`
+  - `PipelineStepResponse`
+- 后端新增 pipeline service：
+  - `backend/app/services/pipeline.py`
+  - `prepare_document_demo` 串行调用 render、parse text、parse tables。
+  - 成功后设置 document status 为 `demo_ready`。
+- 后端新增 API：
+  - `POST /api/documents/{document_id}/prepare-demo`
+- 后端新增测试：
+  - `backend/app/tests/test_pipeline.py`
+  - 覆盖 prepare-demo、状态更新、counts 返回，以及 prepare 后直接 ask。
+- 前端新增：
+  - `PrepareDemoResponse` 类型。
+  - `prepareDemo` API helper。
+  - `prepareDemoAction` server action。
+  - 文档卡片 `Prepare demo` 主按钮。
+  - `demo_ready` 和 `preparing_demo` 状态样式。
+  - `DocumentWorkbench` demo ready 提示面板。
+  - 页面状态更新为 Phase 8，当前范围显示为 V0 demo ready workflow。
+- 文档新增：
+  - `docs/v0/phase08-v0-demo-polish-detailed-design.md`
+  - `docs/v0/v0-demo-runbook.md`
+
+### 验证记录
+
+- 后端测试通过：
+
+```text
+.venv\Scripts\python.exe -m pytest
+24 passed, 1 warning
+```
+
+- 前端构建通过：
+
+```text
+npm run build
+Compiled successfully
+```
+
+- Phase 8 smoke 通过：
+  - 生成 1 页含正文和表格的 PDF。
+  - 上传后只调用 `prepare-demo`。
+  - 返回 `prepare_status=demo_ready`。
+  - counts 为 `[1, 4, 1]`，对应 page/text/table。
+  - steps 为 `["render_pages", "parse_text_blocks", "parse_tables"]`。
+  - prepare 后直接提问 `What was revenue in 2026?`。
+  - answer 包含 `Revenue | 100 | 128`。
+  - citation count 为 1，verification passed 为 `True`。
+
+### 遗留问题
+
+- `prepare-demo` 是同步请求，大 PDF 会阻塞请求；后续可升级为后台 job。
+- prepare 会覆盖旧页面/evidence，V0 接受以保证 demo 稳定。
+- V0 demo runbook 仍依赖用户自己提供合适 PDF，后续可添加样例 PDF 或生成脚本。
+
+### 下一步
+
+提交并推送 GitHub。V0 Batch 1 已形成可演示闭环，下一步建议进入 Batch 2：Evidence Graph V1。

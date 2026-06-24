@@ -1,8 +1,7 @@
 import { getApiStatus } from "@/lib/api";
 import { listDocuments, listPageTables, listPageTextBlocks, listPages } from "@/lib/api";
 import { DocumentList } from "@/components/document-list";
-import { PageViewer } from "@/components/page-viewer";
-import { RetrievalPanel } from "@/components/retrieval-panel";
+import { DocumentWorkbench } from "@/components/document-workbench";
 import { UploadForm } from "@/components/upload-form";
 
 const pipeline = [
@@ -56,7 +55,7 @@ export default function Home() {
             Multimodal Agentic RAG for long-PDF reasoning with evidence graphs.
           </p>
         </div>
-        <div className="phase-badge">Phase 5</div>
+        <div className="phase-badge">Phase 8</div>
       </section>
 
       <section className="workspace">
@@ -78,14 +77,13 @@ export default function Home() {
               <p className="eyebrow">Document Workspace</p>
               <h2>Upload and track long PDFs.</h2>
             </div>
-            <span className="stage-label">Phase 5</span>
+            <span className="stage-label">Phase 8</span>
           </div>
           <div className="workspace-grid">
             <UploadForm />
             <DocumentListAsync documentsPromise={documentsPromise} />
           </div>
-          <PageViewerAsync documentsPromise={documentsPromise} />
-          <RetrievalPanelAsync documentsPromise={documentsPromise} />
+          <DocumentWorkbenchAsync documentsPromise={documentsPromise} />
         </section>
 
         <aside className="panel system-panel">
@@ -93,7 +91,7 @@ export default function Home() {
           <StatusPanel />
           <div className="note">
             <p>Current scope</p>
-            <strong>Retrieval tools over evidence nodes</strong>
+            <strong>V0 demo ready workflow</strong>
           </div>
         </aside>
       </section>
@@ -110,7 +108,7 @@ async function DocumentListAsync({
   return <DocumentList documents={documents} />;
 }
 
-async function PageViewerAsync({
+async function DocumentWorkbenchAsync({
   documentsPromise,
 }: {
   documentsPromise: Promise<Awaited<ReturnType<typeof listDocuments>>>;
@@ -128,20 +126,11 @@ async function PageViewerAsync({
       ? await listPageTables(activeDocument.id, firstPage.page_number).catch(() => [])
       : [];
   return (
-    <PageViewer
+    <DocumentWorkbench
       document={activeDocument}
       pages={pages}
       textBlocks={textBlocks}
       tables={tables}
     />
   );
-}
-
-async function RetrievalPanelAsync({
-  documentsPromise,
-}: {
-  documentsPromise: Promise<Awaited<ReturnType<typeof listDocuments>>>;
-}) {
-  const documents = await documentsPromise;
-  return <RetrievalPanel document={documents[0] ?? null} />;
 }

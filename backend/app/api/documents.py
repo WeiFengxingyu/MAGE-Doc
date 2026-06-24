@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.document import DocumentResponse, DocumentStatusResponse
 from app.schemas.evidence import EvidenceNodeResponse
+from app.schemas.agent import QuestionAnswerResponse, QuestionRequest
 from app.schemas.page import PageResponse
+from app.schemas.pipeline import PrepareDemoResponse
 from app.schemas.tools import (
     InspectPageResponse,
     ReadTableResponse,
@@ -14,6 +16,7 @@ from app.schemas.tools import (
     VerifyAnswerResponse,
 )
 from app.services.documents import create_document, get_document, list_documents
+from app.services.agent import answer_question
 from app.services.evidence import (
     list_document_tables,
     list_document_text_blocks,
@@ -28,6 +31,7 @@ from app.services.pages import (
     list_pages,
     render_document_pages,
 )
+from app.services.pipeline import prepare_document_demo
 from app.services.retrieval import (
     inspect_page_tool,
     read_table_tool,
@@ -75,6 +79,14 @@ def render_document(
     return render_document_pages(db, document_id)
 
 
+@router.post("/{document_id}/prepare-demo", response_model=PrepareDemoResponse)
+def prepare_demo(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> PrepareDemoResponse:
+    return prepare_document_demo(db, document_id)
+
+
 @router.post("/{document_id}/parse-text", response_model=list[EvidenceNodeResponse])
 def parse_document_text(
     document_id: str,
@@ -116,6 +128,15 @@ def document_search(
     db: Session = Depends(get_db),
 ) -> SearchResponse:
     return search_evidence(db, document_id, query=query, top_k=top_k, node_types=node_types)
+
+
+@router.post("/{document_id}/questions", response_model=QuestionAnswerResponse)
+def ask_document_question(
+    document_id: str,
+    payload: QuestionRequest,
+    db: Session = Depends(get_db),
+) -> QuestionAnswerResponse:
+    return answer_question(db, document_id, payload.question)
 
 
 @router.get("/{document_id}/pages", response_model=list[PageResponse])

@@ -22,6 +22,8 @@ export type DocumentRecord = {
     | "parsed"
     | "parsing_tables"
     | "tables_parsed"
+    | "preparing_demo"
+    | "demo_ready"
     | "failed";
   error_message: string | null;
   created_at: string;
@@ -86,4 +88,52 @@ export type SearchState = {
   query: string;
   scope: "all" | "text" | "tables";
   response: SearchResponse | null;
+};
+
+export type Citation = {
+  node_id: string;
+  node_type: "text_block" | "table";
+  page_number: number;
+  bbox: [number, number, number, number];
+  snippet: string;
+};
+
+export type Verification = {
+  document_id: string;
+  passed: boolean;
+  answer_present: boolean;
+  citation_count: number;
+  covered_citation_node_ids: string[];
+  missing_citation_node_ids: string[];
+  tool_trace: ToolTrace;
+};
+
+export type QuestionAnswerResponse = {
+  document_id: string;
+  question: string;
+  question_type: "table_lookup" | "text_lookup";
+  answer: string;
+  citations: Citation[];
+  trace: ToolTrace[];
+  verification: Verification;
+};
+
+export type AskState = {
+  ok: boolean;
+  message: string;
+  question: string;
+  response: QuestionAnswerResponse | null;
+};
+
+export type PrepareDemoResponse = {
+  document_id: string;
+  status: "demo_ready";
+  page_count: number;
+  text_block_count: number;
+  table_count: number;
+  steps: Array<{
+    name: string;
+    status: string;
+    output_summary: string;
+  }>;
 };

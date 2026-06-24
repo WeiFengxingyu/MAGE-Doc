@@ -3,6 +3,8 @@ import type {
   DocumentRecord,
   EvidenceNode,
   PageRecord,
+  PrepareDemoResponse,
+  QuestionAnswerResponse,
   SearchResponse,
 } from "@/types/api";
 
@@ -96,6 +98,19 @@ export async function parseTables(documentId: string): Promise<EvidenceNode[]> {
   return response.json() as Promise<EvidenceNode[]>;
 }
 
+export async function prepareDemo(documentId: string): Promise<PrepareDemoResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/documents/${documentId}/prepare-demo`, {
+    method: "POST",
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Prepare demo request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<PrepareDemoResponse>;
+}
+
 export async function listPages(documentId: string): Promise<PageRecord[]> {
   const response = await fetch(`${API_BASE_URL}/api/documents/${documentId}/pages`, {
     cache: "no-store",
@@ -173,6 +188,38 @@ export async function searchEvidence({
   }
 
   return response.json() as Promise<SearchResponse>;
+}
+
+export async function askQuestion({
+  documentId,
+  question,
+}: {
+  documentId: string;
+  question: string;
+}): Promise<QuestionAnswerResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/documents/${documentId}/questions`, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ question }),
+  });
+
+  if (!response.ok) {
+    let detail = `Question request failed: ${response.status}`;
+    try {
+      const payload = (await response.json()) as { detail?: string };
+      if (payload.detail) {
+        detail = payload.detail;
+      }
+    } catch {
+      // Keep the status-based error.
+    }
+    throw new Error(detail);
+  }
+
+  return response.json() as Promise<QuestionAnswerResponse>;
 }
 
 export function absoluteApiUrl(path: string): string {

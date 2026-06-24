@@ -97,5 +97,6 @@ Version -> Batch -> Phase
 | Phase 3 | 文本块解析 | `docs/v0/phase03-text-block-parsing-detailed-design.md` |
 | Phase 4 | 基础表格解析 | `docs/v0/phase04-table-parsing-detailed-design.md` |
 | Phase 5 | 基础检索与工具层 | `docs/v0/phase05-retrieval-tools-detailed-design.md` |
-| Phase 6 | V0 Agentic RAG 闭环 | 待创建 |
-| Phase 7 | 前端问答与引用高亮 | 待创建 |
+| Phase 6 | V0 Agentic RAG 闭环 | `docs/v0/phase06-agentic-rag-loop-detailed-design.md` |
+| Phase 7 | 前端问答与引用高亮 | `docs/v0/phase07-qa-citation-highlight-detailed-design.md` |
+| Phase 8 | V0 Demo Polish 与一键准备 | `docs/v0/phase08-v0-demo-polish-detailed-design.md` |
