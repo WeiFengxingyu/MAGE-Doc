@@ -96,6 +96,6 @@ Version -> Batch -> Phase
 | Phase 2 | 页面渲染与坐标系统 | `docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md` |
 | Phase 3 | 文本块解析 | `docs/v0/phase03-text-block-parsing-detailed-design.md` |
 | Phase 4 | 基础表格解析 | `docs/v0/phase04-table-parsing-detailed-design.md` |
-| Phase 5 | 基础检索与工具层 | 待创建 |
+| Phase 5 | 基础检索与工具层 | `docs/v0/phase05-retrieval-tools-detailed-design.md` |
 | Phase 6 | V0 Agentic RAG 闭环 | 待创建 |
 | Phase 7 | 前端问答与引用高亮 | 待创建 |

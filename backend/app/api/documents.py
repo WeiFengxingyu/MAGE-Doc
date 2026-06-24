@@ -6,6 +6,13 @@ from app.db.session import get_db
 from app.schemas.document import DocumentResponse, DocumentStatusResponse
 from app.schemas.evidence import EvidenceNodeResponse
 from app.schemas.page import PageResponse
+from app.schemas.tools import (
+    InspectPageResponse,
+    ReadTableResponse,
+    SearchResponse,
+    VerifyAnswerRequest,
+    VerifyAnswerResponse,
+)
 from app.services.documents import create_document, get_document, list_documents
 from app.services.evidence import (
     list_document_tables,
@@ -20,6 +27,12 @@ from app.services.pages import (
     get_page_response,
     list_pages,
     render_document_pages,
+)
+from app.services.retrieval import (
+    inspect_page_tool,
+    read_table_tool,
+    search_evidence,
+    verify_answer_tool,
 )
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
@@ -94,6 +107,17 @@ def document_tables(
     return list_document_tables(db, document_id)
 
 
+@router.get("/{document_id}/search", response_model=SearchResponse)
+def document_search(
+    document_id: str,
+    query: str,
+    top_k: int = 5,
+    node_types: str | None = None,
+    db: Session = Depends(get_db),
+) -> SearchResponse:
+    return search_evidence(db, document_id, query=query, top_k=top_k, node_types=node_types)
+
+
 @router.get("/{document_id}/pages", response_model=list[PageResponse])
 def document_pages(
     document_id: str,
@@ -142,3 +166,44 @@ def document_page_tables(
     db: Session = Depends(get_db),
 ) -> list[EvidenceNodeResponse]:
     return list_page_tables(db, document_id, page_number)
+
+
+@router.get(
+    "/{document_id}/tools/inspect-page/{page_number}",
+    response_model=InspectPageResponse,
+)
+def inspect_page(
+    document_id: str,
+    page_number: int,
+    db: Session = Depends(get_db),
+) -> InspectPageResponse:
+    return inspect_page_tool(db, document_id, page_number)
+
+
+@router.get(
+    "/{document_id}/tools/read-table/{table_id}",
+    response_model=ReadTableResponse,
+)
+def read_table(
+    document_id: str,
+    table_id: str,
+    db: Session = Depends(get_db),
+) -> ReadTableResponse:
+    return read_table_tool(db, document_id, table_id)
+
+
+@router.post(
+    "/{document_id}/tools/verify-answer",
+    response_model=VerifyAnswerResponse,
+)
+def verify_answer(
+    document_id: str,
+    payload: VerifyAnswerRequest,
+    db: Session = Depends(get_db),
+) -> VerifyAnswerResponse:
+    return verify_answer_tool(
+        db,
+        document_id,
+        answer=payload.answer,
+        citation_node_ids=payload.citation_node_ids,
+    )

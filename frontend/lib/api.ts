@@ -1,4 +1,10 @@
-import type { ApiStatusResponse, DocumentRecord, EvidenceNode, PageRecord } from "@/types/api";
+import type {
+  ApiStatusResponse,
+  DocumentRecord,
+  EvidenceNode,
+  PageRecord,
+  SearchResponse,
+} from "@/types/api";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
 
@@ -136,6 +142,37 @@ export async function listPageTables(
   }
 
   return response.json() as Promise<EvidenceNode[]>;
+}
+
+export async function searchEvidence({
+  documentId,
+  query,
+  scope,
+}: {
+  documentId: string;
+  query: string;
+  scope: "all" | "text" | "tables";
+}): Promise<SearchResponse> {
+  const params = new URLSearchParams({
+    query,
+    top_k: "5",
+  });
+  if (scope === "text") {
+    params.set("node_types", "text_block");
+  }
+  if (scope === "tables") {
+    params.set("node_types", "table");
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/documents/${documentId}/search?${params}`, {
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Evidence search failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<SearchResponse>;
 }
 
 export function absoluteApiUrl(path: string): string {

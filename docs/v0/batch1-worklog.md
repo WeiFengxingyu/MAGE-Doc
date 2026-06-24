@@ -377,3 +377,87 @@ Compiled successfully
 ### 下一步
 
 进入 Phase 5：基础检索与工具层。开始前先创建 `docs/v0/phase05-retrieval-tools-detailed-design.md`。
+
+## 2026-06-24 Phase 5
+
+### 当前阶段
+
+Phase 5：基础检索与工具层。
+
+### Phase 5 设计摘要
+
+Phase 5 在已有 `text_block` 和 `table` evidence nodes 上建立本地 BM25-style 检索，并抽象出可供 Phase 6 Agent 调用的工具接口：`search_evidence`、`inspect_page`、`read_table`、`verify_answer`。
+
+### 关键决策
+
+- V0 不接外部 embedding 服务，先用本地可解释 BM25-style keyword retrieval。
+- 工具响应携带结构化 trace，但暂不持久化到数据库。
+- 搜索结果内嵌 evidence node，保留 page、bbox、node_id 和 matched terms。
+- Phase 5 不生成答案，答案生成和 Agent planning 留到 Phase 6。
+
+### 实现记录
+
+- 后端新增工具 schema：
+  - `backend/app/schemas/tools.py`
+  - `SearchResponse`
+  - `InspectPageResponse`
+  - `ReadTableResponse`
+  - `VerifyAnswerRequest`
+  - `VerifyAnswerResponse`
+  - `ToolTraceResponse`
+- 后端新增 retrieval service：
+  - `backend/app/services/retrieval.py`
+  - `search_evidence` 使用本地 BM25-style keyword retrieval。
+  - `inspect_page_tool` 返回页面元数据和 evidence 概览。
+  - `read_table_tool` 返回表格 matrix、cells、row/col count 和 bbox。
+  - `verify_answer_tool` 校验 answer 是否非空、citation 是否存在且属于当前文档。
+- 后端新增 API：
+  - `GET /api/documents/{document_id}/search`
+  - `GET /api/documents/{document_id}/tools/inspect-page/{page_number}`
+  - `GET /api/documents/{document_id}/tools/read-table/{table_id}`
+  - `POST /api/documents/{document_id}/tools/verify-answer`
+- 后端新增测试：
+  - `backend/app/tests/test_retrieval.py`
+  - 覆盖文本检索、表格检索、页面检查、读表工具和答案引用校验。
+- 前端新增：
+  - `SearchResponse`、`SearchResult`、`ToolTrace`、`SearchState` 类型。
+  - `searchEvidence` API helper。
+  - `searchEvidenceAction` server action。
+  - `RetrievalPanel` 检索调试面板。
+  - 页面状态更新为 Phase 5，当前范围显示为 evidence retrieval tools。
+
+### 验证记录
+
+- 后端测试通过：
+
+```text
+.venv\Scripts\python.exe -m pytest
+19 passed, 1 warning
+```
+
+- 前端构建通过：
+
+```text
+npm run build
+Compiled successfully
+```
+
+- 检索 smoke 通过：
+  - 生成 1 页含正文和表格的 PDF。
+  - 上传、渲染、解析文本、解析表格。
+  - 搜索 `Revenue 2026`。
+  - 返回 3 个结果。
+  - top result 为 `table`，page=1，matched terms 为 `["revenue", "2026"]`。
+  - top bbox 为 `[60.0, 95.0, 330.0, 179.0]`。
+  - trace 为 `tool_name=search_evidence`，`output_summary=3 results`。
+
+### 遗留问题
+
+- BM25-style 检索不具备语义泛化能力，V1 需要接入 embedding + reranker。
+- 工具 trace 当前随响应返回，尚未持久化到 `tool_calls` 表。
+- 中文检索采用 ASCII token + CJK char/bigram 的轻量策略，后续可接入更强分词或多语种 embedding。
+- 前端检索结果暂不联动页面高亮，点击 citation 跳转与高亮留到 Phase 7。
+
+### 下一步
+
+进入 Phase 6：V0 Agentic RAG 闭环。开始前先创建 `docs/v0/phase06-agentic-rag-loop-detailed-design.md`。

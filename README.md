@@ -25,6 +25,7 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V0 Phase 2 Detailed Design](docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md)
 - [V0 Phase 3 Detailed Design](docs/v0/phase03-text-block-parsing-detailed-design.md)
 - [V0 Phase 4 Detailed Design](docs/v0/phase04-table-parsing-detailed-design.md)
+- [V0 Phase 5 Detailed Design](docs/v0/phase05-retrieval-tools-detailed-design.md)
 - [V0 Batch 1 Worklog](docs/v0/batch1-worklog.md)
 
 ## Quick Start
@@ -114,3 +115,16 @@ Phase 4 basic table parsing and table evidence nodes is complete:
 - Frontend `Parse tables` action and table bbox overlay on the page viewer.
 - Backend table parsing tests with generated ruled-table PDFs.
 - End-to-end smoke check across upload, render, parse tables, and matrix response.
+
+## Phase 5 Status
+
+Phase 5 basic retrieval and tool layer is complete:
+
+- Local BM25-style retrieval over `text_block` and `table` evidence nodes.
+- Tool-shaped backend functions for `search_evidence`, `inspect_page`, `read_table`, and `verify_answer`.
+- Search responses include score, matched terms, snippet, page, bbox, node id, and tool trace.
+- Page inspection API and table reading API for future Agent workflows.
+- Basic citation verification API.
+- Frontend retrieval panel with scope selection and evidence result cards.
+- Backend retrieval tests with generated text/table PDFs.
+- End-to-end smoke check across upload, render, parse, search, and trace response.

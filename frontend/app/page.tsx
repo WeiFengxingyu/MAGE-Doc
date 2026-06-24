@@ -2,6 +2,7 @@ import { getApiStatus } from "@/lib/api";
 import { listDocuments, listPageTables, listPageTextBlocks, listPages } from "@/lib/api";
 import { DocumentList } from "@/components/document-list";
 import { PageViewer } from "@/components/page-viewer";
+import { RetrievalPanel } from "@/components/retrieval-panel";
 import { UploadForm } from "@/components/upload-form";
 
 const pipeline = [
@@ -55,7 +56,7 @@ export default function Home() {
             Multimodal Agentic RAG for long-PDF reasoning with evidence graphs.
           </p>
         </div>
-        <div className="phase-badge">Phase 4</div>
+        <div className="phase-badge">Phase 5</div>
       </section>
 
       <section className="workspace">
@@ -77,13 +78,14 @@ export default function Home() {
               <p className="eyebrow">Document Workspace</p>
               <h2>Upload and track long PDFs.</h2>
             </div>
-            <span className="stage-label">Phase 4</span>
+            <span className="stage-label">Phase 5</span>
           </div>
           <div className="workspace-grid">
             <UploadForm />
             <DocumentListAsync documentsPromise={documentsPromise} />
           </div>
           <PageViewerAsync documentsPromise={documentsPromise} />
+          <RetrievalPanelAsync documentsPromise={documentsPromise} />
         </section>
 
         <aside className="panel system-panel">
@@ -91,7 +93,7 @@ export default function Home() {
           <StatusPanel />
           <div className="note">
             <p>Current scope</p>
-            <strong>Text and table evidence overlay</strong>
+            <strong>Retrieval tools over evidence nodes</strong>
           </div>
         </aside>
       </section>
@@ -133,4 +135,13 @@ async function PageViewerAsync({
       tables={tables}
     />
   );
+}
+
+async function RetrievalPanelAsync({
+  documentsPromise,
+}: {
+  documentsPromise: Promise<Awaited<ReturnType<typeof listDocuments>>>;
+}) {
+  const documents = await documentsPromise;
+  return <RetrievalPanel document={documents[0] ?? null} />;
 }

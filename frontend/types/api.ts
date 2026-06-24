@@ -57,3 +57,33 @@ export type EvidenceNode = {
   metadata: Record<string, unknown>;
   created_at: string;
 };
+
+export type ToolTrace = {
+  tool_name: string;
+  input: Record<string, unknown>;
+  output_summary: string;
+  latency_ms: number;
+};
+
+export type SearchResult = {
+  rank: number;
+  score: number;
+  matched_terms: string[];
+  snippet: string;
+  node: EvidenceNode;
+};
+
+export type SearchResponse = {
+  query: string;
+  document_id: string;
+  results: SearchResult[];
+  tool_trace: ToolTrace;
+};
+
+export type SearchState = {
+  ok: boolean;
+  message: string;
+  query: string;
+  scope: "all" | "text" | "tables";
+  response: SearchResponse | null;
+};
