@@ -128,13 +128,28 @@ Batch 5: V1 Evaluation and Release
 Batch 6: V2 Advanced Features
 ```
 
-当前最应该开始的是：
+当前 V0 已完成，下一步应该开始的是：
 
-> **Batch 1：V0 Foundation**
+> **Batch 2：V1 Evidence Graph Agentic RAG**
 
 原因：
 
-- 它能快速建立项目骨架。
-- 它把 PDF 坐标、页面渲染、文本块、表格解析这些底层难点先解决。
-- 后续 evidence graph、Agent、评测都依赖这些基础数据。
+- V0 已经打通上传、渲染、解析、检索、问答、引用和高亮。
+- V1 可以直接基于已有证据节点构建 graph，而不是重新造底层 demo。
+- Evidence graph、Agent trace、claim verification 和 evaluation 是项目最能加分的深度部分。
 
+## 7. 当前执行入口
+
+V1 的执行入口已经拆分为独立文档：
+
+- `docs/v1/v1-outline-design.md`：V1 概要设计。
+- `docs/v1/v1-implementation-plan.md`：V1 分阶段实现计划。
+- `docs/v1/batch2-worklog.md`：V1 大阶段工作日志。
+
+推荐下一步：
+
+```text
+V1 Phase 1: Evidence Graph 数据模型
+```
+
+Phase 1 必须先写详细设计文档，再实现 edge table、graph service、graph build API 和基础邻域查询。

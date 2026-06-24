@@ -18,6 +18,9 @@ class SearchResultResponse(BaseModel):
     matched_terms: list[str]
     snippet: str
     node: EvidenceNodeResponse
+    retrieval_source: str = "lexical"
+    candidate_sources: list[str] = Field(default_factory=list)
+    score_breakdown: dict[str, float] = Field(default_factory=dict)
 
 
 class SearchResponse(BaseModel):

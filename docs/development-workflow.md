@@ -23,11 +23,11 @@ Version -> Batch -> Phase
 每个 Phase 都按以下顺序执行：
 
 1. **写详细设计文档**
-   - 文件命名：`docs/v0/phaseXX-<name>-detailed-design.md`
+   - 文件命名：`docs/v<version>/phaseXX-<name>-detailed-design.md`
    - 必须写清目标、范围、架构、文件结构、接口、验收标准和风险。
 
 2. **更新大阶段工作日志**
-   - 文件命名：`docs/v0/batch1-worklog.md`
+   - 文件命名：`docs/v<version>/batchN-worklog.md`
    - 记录当前 Phase 的设计决策、实现过程、验证结果和遗留问题。
 
 3. **按详细设计实现**
@@ -100,3 +100,24 @@ Version -> Batch -> Phase
 | Phase 6 | V0 Agentic RAG 闭环 | `docs/v0/phase06-agentic-rag-loop-detailed-design.md` |
 | Phase 7 | 前端问答与引用高亮 | `docs/v0/phase07-qa-citation-highlight-detailed-design.md` |
 | Phase 8 | V0 Demo Polish 与一键准备 | `docs/v0/phase08-v0-demo-polish-detailed-design.md` |
+
+## 8. V1 Phase 列表
+
+V1 对应 Batch 2，目标是把 V0 的可演示闭环升级为 Evidence Graph Agentic RAG 强项目版本。
+
+V1 的入口文档：
+
+- 概要设计：`docs/v1/v1-outline-design.md`
+- 分阶段计划：`docs/v1/v1-implementation-plan.md`
+- 工作日志：`docs/v1/batch2-worklog.md`
+
+| Phase | 名称 | 详细设计 |
+| --- | --- | --- |
+| Phase 1 | Evidence Graph 数据模型 | `docs/v1/phase01-evidence-graph-data-model-detailed-design.md` |
+| Phase 2 | Layout 关系与 Section 构建 | `docs/v1/phase02-layout-section-graph-detailed-design.md` |
+| Phase 3 | Hybrid Retrieval Index | `docs/v1/phase03-hybrid-retrieval-index-detailed-design.md` |
+| Phase 4 | Graph Expansion 与 Evidence Pack | `docs/v1/phase04-graph-expansion-evidence-pack-detailed-design.md` |
+| Phase 5 | Tool Registry 与 Trace Store | `docs/v1/phase05-tool-registry-trace-store-detailed-design.md` |
+| Phase 6 | Claim Verification | `docs/v1/phase06-claim-verification-detailed-design.md` |
+| Phase 7 | Evaluation Harness | `docs/v1/phase07-evaluation-harness-detailed-design.md` |
+| Phase 8 | V1 Workbench Polish | `docs/v1/phase08-v1-workbench-polish-detailed-design.md` |

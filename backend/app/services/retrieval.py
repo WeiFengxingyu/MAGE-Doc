@@ -3,6 +3,7 @@ import math
 import re
 import time
 from collections import Counter
+from hashlib import blake2b
 from typing import Any
 
 from fastapi import HTTPException, status
@@ -17,6 +18,8 @@ from app.services.pages import get_page
 DEFAULT_NODE_TYPES = {"text_block", "table"}
 ASCII_TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_]+")
 CJK_PATTERN = re.compile(r"[\u4e00-\u9fff]")
+TABLE_QUERY_TERMS = {"table", "metric", "revenue", "income", "margin", "表", "指标", "收入", "利润"}
+SUMMARY_QUERY_TERMS = {"summary", "reason", "risk", "概括", "总结", "原因", "风险"}
 
 
 def _elapsed_ms(start: float) -> int:
@@ -61,6 +64,50 @@ def _metadata_text(metadata: dict[str, Any]) -> str:
 def _searchable_text(node: EvidenceNode) -> str:
     metadata = _json_loads(node.metadata_json, {})
     return f"{node.text} {_metadata_text(metadata)}"
+
+
+def _stable_bucket(token: str, dimensions: int = 64) -> int:
+    digest = blake2b(token.encode("utf-8"), digest_size=4).digest()
+    return int.from_bytes(digest, "big") % dimensions
+
+
+def _hashed_vector(tokens: list[str], dimensions: int = 64) -> list[float]:
+    vector = [0.0] * dimensions
+    for token in tokens:
+        vector[_stable_bucket(token, dimensions)] += 1.0
+    return vector
+
+
+def _cosine(first: list[float], second: list[float]) -> float:
+    numerator = sum(left * right for left, right in zip(first, second, strict=True))
+    first_norm = math.sqrt(sum(value * value for value in first))
+    second_norm = math.sqrt(sum(value * value for value in second))
+    if first_norm == 0 or second_norm == 0:
+        return 0.0
+    return numerator / (first_norm * second_norm)
+
+
+def _semantic_score(query_terms: list[str], document_terms: list[str]) -> float:
+    if not query_terms or not document_terms:
+        return 0.0
+    return _cosine(_hashed_vector(query_terms), _hashed_vector(document_terms))
+
+
+def _metadata_score(query_terms: list[str], node: EvidenceNode) -> float:
+    metadata = _json_loads(node.metadata_json, {})
+    query_set = set(query_terms)
+    score = 0.0
+    if query_set & TABLE_QUERY_TERMS and node.node_type in {"table", "table_cell"}:
+        score += 0.6
+    if any(term.isdigit() for term in query_terms) and node.node_type in {"table", "table_cell"}:
+        score += 0.25
+    if query_set & SUMMARY_QUERY_TERMS and node.node_type in {"text_block", "section", "caption"}:
+        score += 0.25
+    if metadata.get("is_header") is True:
+        score += 0.15
+    if node.node_type == "caption" and query_set & TABLE_QUERY_TERMS:
+        score += 0.2
+    return min(score, 1.0)
 
 
 def _snippet(value: str, matched_terms: list[str], max_length: int = 180) -> str:
@@ -132,7 +179,8 @@ def search_evidence(
             "tool_trace": _trace("search_evidence", input_payload, "0 results", start),
         }
 
-    documents = [_tokenize(_searchable_text(node)) for node in nodes]
+    searchable_texts = [_searchable_text(node) for node in nodes]
+    documents = [_tokenize(searchable_text) for searchable_text in searchable_texts]
     doc_freq: Counter[str] = Counter()
     for tokens in documents:
         doc_freq.update(set(tokens))
@@ -140,7 +188,8 @@ def search_evidence(
     avg_len = sum(len(tokens) for tokens in documents) / max(len(documents), 1)
     k1 = 1.5
     b = 0.75
-    scored: list[tuple[float, EvidenceNode, list[str], str]] = []
+    lexical_scores: dict[str, float] = {}
+    matched_by_node: dict[str, list[str]] = {}
     unique_query_terms = list(dict.fromkeys(query_terms))
     for node, tokens in zip(nodes, documents, strict=True):
         term_counts = Counter(tokens)
@@ -155,8 +204,42 @@ def search_evidence(
             idf = math.log(1 + (len(documents) - df + 0.5) / (df + 0.5))
             denominator = tf + k1 * (1 - b + b * (len(tokens) / max(avg_len, 1)))
             score += idf * ((tf * (k1 + 1)) / denominator)
-        if score > 0:
-            scored.append((score, node, matched_terms, _searchable_text(node)))
+        lexical_scores[node.id] = score
+        matched_by_node[node.id] = matched_terms
+
+    max_lexical = max(lexical_scores.values(), default=0.0)
+    scored: list[tuple[float, EvidenceNode, list[str], str, dict[str, float], list[str]]] = []
+    for node, tokens, searchable_text in zip(nodes, documents, searchable_texts, strict=True):
+        raw_lexical = lexical_scores.get(node.id, 0.0)
+        lexical_score = raw_lexical / max_lexical if max_lexical > 0 else 0.0
+        semantic_score = _semantic_score(query_terms, tokens)
+        metadata_score = _metadata_score(query_terms, node)
+        hybrid_score = (lexical_score * 0.65) + (semantic_score * 0.25) + (metadata_score * 0.10)
+        if hybrid_score <= 0:
+            continue
+        candidate_sources: list[str] = []
+        if lexical_score > 0:
+            candidate_sources.append("lexical")
+        if semantic_score > 0:
+            candidate_sources.append("semantic_fallback")
+        if metadata_score > 0:
+            candidate_sources.append("metadata")
+        breakdown = {
+            "lexical": round(lexical_score, 6),
+            "semantic": round(semantic_score, 6),
+            "metadata": round(metadata_score, 6),
+            "hybrid": round(hybrid_score, 6),
+        }
+        scored.append(
+            (
+                hybrid_score,
+                node,
+                matched_by_node.get(node.id, []),
+                searchable_text,
+                breakdown,
+                candidate_sources,
+            )
+        )
 
     scored.sort(key=lambda item: (-item[0], item[1].page.page_number, item[1].reading_order))
     limited = scored[: max(1, min(top_k, 20))]
@@ -167,14 +250,25 @@ def search_evidence(
             "matched_terms": matched_terms,
             "snippet": _snippet(searchable_text, matched_terms),
             "node": _node_to_response(node),
+            "retrieval_source": "hybrid",
+            "candidate_sources": candidate_sources,
+            "score_breakdown": breakdown,
         }
-        for index, (score, node, matched_terms, searchable_text) in enumerate(limited, start=1)
+        for index, (score, node, matched_terms, searchable_text, breakdown, candidate_sources) in enumerate(
+            limited,
+            start=1,
+        )
     ]
     return {
         "query": query,
         "document_id": document_id,
         "results": results,
-        "tool_trace": _trace("search_evidence", input_payload, f"{len(results)} results", start),
+        "tool_trace": _trace(
+            "search_evidence",
+            input_payload,
+            f"{len(results)} hybrid candidates",
+            start,
+        ),
     }
 
 

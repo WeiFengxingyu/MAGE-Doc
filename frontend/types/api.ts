@@ -52,7 +52,7 @@ export type EvidenceNode = {
   document_id: string;
   page_id: string;
   page_number: number;
-  node_type: "text_block" | "table";
+  node_type: "text_block" | "table" | "section" | "table_cell" | "caption";
   text: string;
   bbox: [number, number, number, number];
   reading_order: number;
@@ -73,6 +73,9 @@ export type SearchResult = {
   matched_terms: string[];
   snippet: string;
   node: EvidenceNode;
+  retrieval_source: string;
+  candidate_sources: string[];
+  score_breakdown: Record<string, number>;
 };
 
 export type SearchResponse = {

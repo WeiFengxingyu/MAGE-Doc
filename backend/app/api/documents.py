@@ -6,6 +6,7 @@ from app.db.session import get_db
 from app.schemas.document import DocumentResponse, DocumentStatusResponse
 from app.schemas.evidence import EvidenceNodeResponse
 from app.schemas.agent import QuestionAnswerResponse, QuestionRequest
+from app.schemas.graph import DocumentGraphResponse, GraphBuildResponse, NodeNeighborsResponse
 from app.schemas.page import PageResponse
 from app.schemas.pipeline import PrepareDemoResponse
 from app.schemas.tools import (
@@ -25,6 +26,7 @@ from app.services.evidence import (
     parse_document_tables,
     parse_document_text_blocks,
 )
+from app.services.graph import build_document_graph, get_node_neighbors, list_document_graph
 from app.services.pages import (
     get_page_image_path,
     get_page_response,
@@ -128,6 +130,31 @@ def document_search(
     db: Session = Depends(get_db),
 ) -> SearchResponse:
     return search_evidence(db, document_id, query=query, top_k=top_k, node_types=node_types)
+
+
+@router.post("/{document_id}/graph/build", response_model=GraphBuildResponse)
+def build_graph(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> GraphBuildResponse:
+    return build_document_graph(db, document_id)
+
+
+@router.get("/{document_id}/graph", response_model=DocumentGraphResponse)
+def document_graph(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> DocumentGraphResponse:
+    return list_document_graph(db, document_id)
+
+
+@router.get("/{document_id}/graph/neighbors/{node_id}", response_model=NodeNeighborsResponse)
+def graph_neighbors(
+    document_id: str,
+    node_id: str,
+    db: Session = Depends(get_db),
+) -> NodeNeighborsResponse:
+    return get_node_neighbors(db, document_id, node_id)
 
 
 @router.post("/{document_id}/questions", response_model=QuestionAnswerResponse)

@@ -94,6 +94,9 @@ def test_search_text_and_table_evidence(tmp_path: Path, monkeypatch) -> None:
         assert text_payload["tool_trace"]["tool_name"] == "search_evidence"
         assert text_payload["results"][0]["node"]["node_type"] == "text_block"
         assert "enterprise" in text_payload["results"][0]["matched_terms"]
+        assert text_payload["results"][0]["retrieval_source"] == "hybrid"
+        assert "lexical" in text_payload["results"][0]["candidate_sources"]
+        assert "semantic" in text_payload["results"][0]["score_breakdown"]
 
         table_response = client.get(
             f"/api/documents/{document['id']}/search",
@@ -107,6 +110,8 @@ def test_search_text_and_table_evidence(tmp_path: Path, monkeypatch) -> None:
             "100",
             "128",
         ]
+        assert "metadata" in table_payload["results"][0]["candidate_sources"]
+        assert table_payload["results"][0]["score_breakdown"]["metadata"] > 0
     finally:
         _reset_client()
 
