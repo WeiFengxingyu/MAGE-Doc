@@ -1,0 +1,2 @@
+"""MAGE-Doc backend package."""
+
