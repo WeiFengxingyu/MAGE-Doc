@@ -35,8 +35,8 @@ Batch 2 - Evidence Graph Agentic RAG planning。
 | Phase 4 | Graph Expansion 与 Evidence Pack | 已完成 |
 | Phase 5 | Tool Registry 与 Trace Store | 已完成 |
 | Phase 6 | Claim Verification | 已完成 |
-| Phase 7 | Evaluation Harness | 待开始 |
-| Phase 8 | V1 Workbench Polish | 待开始 |
+| Phase 7 | Evaluation Harness | 已完成 |
+| Phase 8 | V1 Workbench Polish | 已完成 |
 
 ### 下一步
 
@@ -215,3 +215,74 @@ V1 Phase 6 - Claim Verification 已按“详细设计 -> 实现 -> 验证 -> 记
 进入 V1 Phase 7：Evaluation Harness。
 
 Phase 7 必须先写 `docs/v1/phase07-evaluation-harness-detailed-design.md`，再建立小型公开 PDF QA 数据集、策略 runner 和指标报告。
+
+## 2026-06-24：Phase 7 闭环
+
+### 当前阶段
+
+V1 Phase 7 - Evaluation Harness 已按“详细设计 -> 实现 -> 验证 -> 记录”的工作流完成。
+
+### 详细设计
+
+- 新增 `docs/v1/phase07-evaluation-harness-detailed-design.md`。
+- 明确 eval case schema、synthetic PDF fixture、strategy runner、metrics 和 report 输出。
+
+### 实现摘要
+
+- 新增 `eval/cases/sample_cases.jsonl`。
+- 新增 `eval/run_eval.py`。
+- 新增 `eval/README.md`。
+- 新增 `backend/app/tests/test_eval_harness.py`。
+- Runner 使用 FastAPI TestClient 走真实 API，自动生成 synthetic PDF、上传、prepare demo、运行策略并输出 JSON/Markdown 报告。
+- 评测策略：
+  - `v0_agent_baseline`
+  - `v1_evidence_pack`
+- 评测报告：
+  - `eval/reports/v1_eval_report.json`
+  - `eval/reports/v1_eval_report.md`
+
+### 验证记录
+
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests\test_eval_harness.py`：2 passed，1 warning。
+- `backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v1_eval_report.json`：通过。
+
+## 2026-06-24：Phase 8 闭环
+
+### 当前阶段
+
+V1 Phase 8 - Workbench Polish 已按“详细设计 -> 实现 -> 验证 -> 记录”的工作流完成。
+
+### 详细设计
+
+- 新增 `docs/v1/phase08-v1-workbench-polish-detailed-design.md`。
+- 明确 Ask Panel、Retrieval Panel、V1 demo runbook 和 README 包装范围。
+
+### 实现摘要
+
+- Ask Panel 展示：
+  - trace id。
+  - citation coverage summary。
+  - claim verification summary。
+  - claim status、reason、matched terms、missing terms。
+- Retrieval Panel 展示：
+  - retrieval source。
+  - candidate sources。
+  - lexical / semantic / metadata / hybrid score breakdown。
+- 新增 `docs/v1/v1-demo-runbook.md`。
+- README 增加 V1 demo runbook 和 evaluation report 入口。
+
+### 验证记录
+
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests`：37 passed，1 warning。
+- `npm run build`：Next.js production build 通过。
+- `backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v1_eval_report.json`：通过。
+
+### V1 闭环结论
+
+V1 Batch 2 已形成完整闭环：
+
+```text
+Evidence Graph -> Hybrid Retrieval -> Evidence Pack -> Trace Store -> Claim Verification -> Evaluation -> Workbench Demo
+```
+
+下一步可以进入 V2，或先做一次 README 截图、简历 bullet 和项目包装优化。

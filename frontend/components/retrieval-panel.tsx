@@ -26,6 +26,10 @@ function formatBbox(bbox: [number, number, number, number]): string {
   return bbox.map((value) => value.toFixed(1)).join(", ");
 }
 
+function scoreValue(value: number | undefined): string {
+  return typeof value === "number" ? value.toFixed(3) : "0.000";
+}
+
 export function RetrievalPanel({ document }: { document: DocumentRecord | null }) {
   const [state, formAction] = useFormState(searchEvidenceAction, initialState);
 
@@ -69,12 +73,19 @@ export function RetrievalPanel({ document }: { document: DocumentRecord | null }
                 <span>{result.node.node_type}</span>
                 <span>page {result.node.page_number}</span>
                 <span>score {result.score.toFixed(3)}</span>
+                <span>{result.retrieval_source}</span>
               </div>
               <p>{result.snippet}</p>
               <div className="result-tags">
-                {result.matched_terms.map((term) => (
+                {[...result.candidate_sources, ...result.matched_terms].map((term) => (
                   <span key={term}>{term}</span>
                 ))}
+              </div>
+              <div className="score-breakdown">
+                <span>lexical {scoreValue(result.score_breakdown.lexical)}</span>
+                <span>semantic {scoreValue(result.score_breakdown.semantic)}</span>
+                <span>metadata {scoreValue(result.score_breakdown.metadata)}</span>
+                <span>hybrid {scoreValue(result.score_breakdown.hybrid)}</span>
               </div>
               <code>bbox [{formatBbox(result.node.bbox)}]</code>
             </article>

@@ -25,6 +25,16 @@ function formatBbox(bbox: Citation["bbox"]): string {
   return bbox.map((value) => value.toFixed(1)).join(", ");
 }
 
+function statusClassName(status: string): string {
+  if (status === "supported") {
+    return "claim-status claim-status-supported";
+  }
+  if (status === "partial") {
+    return "claim-status claim-status-partial";
+  }
+  return "claim-status claim-status-unsupported";
+}
+
 export function AskPanel({
   document,
   onCitationSelect,
@@ -68,6 +78,48 @@ export function AskPanel({
           <div className="answer-main">
             <p className="eyebrow">Answer</p>
             <p>{response.answer}</p>
+            {response.trace_id ? <code className="trace-id">trace {response.trace_id}</code> : null}
+          </div>
+
+          {response.claim_verification ? (
+            <div className="claim-panel">
+              <div className="claim-summary">
+                <div>
+                  <p className="eyebrow">Claim Verification</p>
+                  <strong>{response.claim_verification.status}</strong>
+                </div>
+                <span>
+                  {response.claim_verification.supported_count}/
+                  {response.claim_verification.claim_count} supported
+                </span>
+              </div>
+              <div className="claim-list">
+                {response.claim_verification.claims.map((claim, index) => (
+                  <article className="claim-item" key={`${claim.status}-${index}`}>
+                    <div>
+                      <span className={statusClassName(claim.status)}>{claim.status}</span>
+                      <strong>{claim.claim}</strong>
+                    </div>
+                    <p>{claim.reason}</p>
+                    {claim.matched_terms.length > 0 ? (
+                      <div className="result-tags">
+                        {claim.matched_terms.slice(0, 6).map((term) => (
+                          <span key={term}>{term}</span>
+                        ))}
+                      </div>
+                    ) : null}
+                    {claim.missing_terms.length > 0 ? (
+                      <code>missing {claim.missing_terms.slice(0, 6).join(", ")}</code>
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="verification-strip">
+            <span>{response.verification.passed ? "citation coverage passed" : "citation coverage failed"}</span>
+            <span>{response.verification.citation_count} citations checked</span>
           </div>
 
           <div className="citation-list">

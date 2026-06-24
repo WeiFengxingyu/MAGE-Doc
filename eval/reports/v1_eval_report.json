@@ -1,0 +1,63 @@
+{
+  "case_count": 2,
+  "result_count": 4,
+  "metrics": {
+    "v0_agent_baseline": {
+      "case_count": 2,
+      "answer_term_hit_rate": 0.8333,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 1.0,
+      "average_tool_calls": 4,
+      "average_latency_ms": 195.5
+    },
+    "v1_evidence_pack": {
+      "case_count": 2,
+      "answer_term_hit_rate": 1.0,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 0.0,
+      "average_tool_calls": 1,
+      "average_latency_ms": 225.5,
+      "evidence_pack_context_hit_rate": 1.0
+    }
+  },
+  "results": [
+    {
+      "case_id": "sample_table_revenue_2026",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 183
+    },
+    {
+      "case_id": "sample_table_revenue_2026",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 225,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "sample_text_enterprise_demand",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 208
+    },
+    {
+      "case_id": "sample_text_enterprise_demand",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 226,
+      "evidence_pack_context_hit": 1.0
+    }
+  ]
+}
