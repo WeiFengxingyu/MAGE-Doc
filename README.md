@@ -36,6 +36,17 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V2 Outline Design](docs/v2/v2-outline-design.md)
 - [V2 Implementation Plan](docs/v2/v2-implementation-plan.md)
 - [V2 Batch 3 Worklog](docs/v2/batch3-worklog.md)
+- [V2 Phase 1 Detailed Design](docs/v2/phase01-ocr-substrate-detailed-design.md)
+- [V2 Phase 2 Detailed Design](docs/v2/phase02-vision-grounding-detailed-design.md)
+- [V2 Phase 3 Detailed Design](docs/v2/phase03-metric-graph-detailed-design.md)
+- [V2 Phase 4 Detailed Design](docs/v2/phase04-multi-document-collection-detailed-design.md)
+- [V2 Phase 5 Detailed Design](docs/v2/phase05-mcp-tool-server-detailed-design.md)
+- [V2 Phase 6 Detailed Design](docs/v2/phase06-benchmark-adapter-detailed-design.md)
+- [V2 Phase 7 Detailed Design](docs/v2/phase07-failure-diagnosis-detailed-design.md)
+- [V2 Phase 8 Detailed Design](docs/v2/phase08-v2-release-polish-detailed-design.md)
+- [V2 Demo Runbook](docs/v2/v2-demo-runbook.md)
+- [V2 Resume Bullets](docs/v2/v2-resume-bullets.md)
+- [V2 Benchmark Report](eval/reports/v2_benchmark_report.md)
 - [V0 Phase 0 Detailed Design](docs/v0/phase00-project-skeleton-detailed-design.md)
 - [V0 Phase 1 Detailed Design](docs/v0/phase01-document-upload-detailed-design.md)
 - [V0 Phase 2 Detailed Design](docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md)
@@ -206,19 +217,21 @@ Run V1 evaluation:
 backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v1_eval_report.json
 ```
 
-## V2 Status
+## V2 Phase 1-8 Status
 
-V2 Phase 1-4 Advanced Multimodal Agent Platform foundation is complete:
+V2 Phase 1-8 Advanced Multimodal Agent Platform is complete:
 
 - OCR substrate for scanned PDFs with `ocr_text_block` evidence nodes.
 - Vision grounding for chart and visual summary evidence.
 - Metric graph for structured numeric reasoning with `metric_value` nodes.
 - Multi-document collection retrieval with document metadata.
-- MCP tool server for external Agent access.
-- Benchmark adapter and failure diagnosis.
+- MCP-compatible tool server for external Agent access through `search_doc`, `inspect_page`, `read_table`, `build_evidence_pack`, and `verify_claims`.
+- Benchmark adapter with `v2_multimodal_graph` strategy and TREC/RAG-style submission helpers.
+- Failure diagnosis for retrieval miss, graph miss, citation mismatch, unsupported claim, OCR confidence, and visual grounding gaps.
+- V2 workbench capability panel, demo runbook, resume bullets, and benchmark report.
 
-Next phase:
+Run V2 evaluation:
 
-```text
-V2 Phase 5: MCP Tool Server
+```powershell
+backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v2_benchmark_report.json
 ```

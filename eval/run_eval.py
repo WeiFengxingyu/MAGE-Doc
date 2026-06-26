@@ -21,6 +21,7 @@ if str(BACKEND_ROOT) not in sys.path:
 
 from app.db.session import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
+from app.services.v2_failure_diagnosis import diagnose_results  # noqa: E402
 
 DEFAULT_CASES = ROOT / "eval" / "cases" / "sample_cases.jsonl"
 
@@ -93,6 +94,12 @@ def prepare_document(client: TestClient) -> dict[str, Any]:
     return document
 
 
+def prepare_v2_layers(client: TestClient, document_id: str) -> None:
+    for endpoint in ("ocr", "vision-grounding", "metric-graph/build"):
+        response = client.post(f"/api/documents/{document_id}/{endpoint}")
+        response.raise_for_status()
+
+
 def _contains_terms(value: str, terms: list[str]) -> float:
     lower = value.lower()
     if not terms:
@@ -150,6 +157,45 @@ def run_v1_pack_case(client: TestClient, document_id: str, case: dict[str, Any])
     }
 
 
+def run_v2_multimodal_case(client: TestClient, document_id: str, case: dict[str, Any]) -> dict[str, Any]:
+    start = time.perf_counter()
+    response = client.get(
+        f"/api/documents/{document_id}/evidence-pack",
+        params={"query": case["question"], "top_k": 3, "depth": 1},
+    )
+    response.raise_for_status()
+    payload = response.json()
+    item_text = " ".join(item["node"]["text"] for item in payload["items"])
+    item_types = {item["node"]["node_type"] for item in payload["items"]}
+    expected_types = set(case.get("expected_node_types", []))
+    answer_hit = _contains_terms(item_text, case.get("expected_answer_terms", []))
+    citation_hit = 1.0 if item_types & expected_types else 0.0
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    evidence = [
+        {
+            "document_id": item["node"]["document_id"],
+            "node_id": item["node"]["id"],
+            "page_number": item["node"]["page_number"],
+            "bbox": item["node"]["bbox"],
+        }
+        for item in payload["items"][:3]
+    ]
+    return {
+        "case_id": case["id"],
+        "strategy": "v2_multimodal_graph",
+        "answer": item_text[:500],
+        "answer_term_hit": answer_hit,
+        "citation_node_type_hit": citation_hit,
+        "claim_supported": 1.0 if answer_hit > 0 and citation_hit > 0 else 0.0,
+        "tool_calls": 4,
+        "latency_ms": latency_ms,
+        "evidence_pack_context_hit": 1.0
+        if payload["summary"]["item_count"] > len(payload["source_candidates"])
+        else 0.0,
+        "evidence": evidence,
+    }
+
+
 def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
     by_strategy: dict[str, list[dict[str, Any]]] = {}
     for result in results:
@@ -173,7 +219,7 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
 
 
 def markdown_report(report: dict[str, Any]) -> str:
-    lines = ["# MAGE-Doc V1 Evaluation Report", ""]
+    lines = ["# MAGE-Doc V2 Evaluation Report", ""]
     lines.append(f"Case count: {report['case_count']}")
     lines.append("")
     lines.append("| Strategy | Answer term hit | Citation type hit | Claim supported | Avg tool calls | Avg latency ms |")
@@ -190,6 +236,16 @@ def markdown_report(report: dict[str, Any]) -> str:
             )
         )
     lines.append("")
+    failure_summary = report.get("failure_summary", {})
+    distribution = failure_summary.get("distribution", {})
+    if distribution:
+        lines.append("## Failure Diagnosis")
+        lines.append("")
+        lines.append("| Reason | Count |")
+        lines.append("| --- | --- |")
+        for reason, count in distribution.items():
+            lines.append(f"| {reason} | {count} |")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -201,13 +257,16 @@ def run_eval(cases_path: Path = DEFAULT_CASES, output: Path | None = None) -> di
         try:
             document = prepare_document(client)
             results: list[dict[str, Any]] = []
+            prepare_v2_layers(client, document["id"])
             for case in cases:
                 results.append(run_v0_agent_case(client, document["id"], case))
                 results.append(run_v1_pack_case(client, document["id"], case))
+                results.append(run_v2_multimodal_case(client, document["id"], case))
             report = {
                 "case_count": len(cases),
                 "result_count": len(results),
                 "metrics": aggregate(results),
+                "failure_summary": diagnose_results(cases, results),
                 "results": results,
             }
         finally:

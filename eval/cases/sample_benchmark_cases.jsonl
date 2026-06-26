@@ -1,0 +1,2 @@
+{"qid":"bench_table_revenue_2026","query":"What was revenue in 2026?","answers":["Revenue","128","2026"],"doc_ids":["magedoc-eval.pdf"],"expected_evidence":[{"node_type":"table"}],"metadata":{"question_type":"table_lookup"}}
+{"qid":"bench_text_enterprise_demand","query":"What explains enterprise demand?","answers":["enterprise","demand"],"doc_ids":["magedoc-eval.pdf"],"expected_evidence":[{"node_type":"text_block"}],"metadata":{"question_type":"text_lookup"}}

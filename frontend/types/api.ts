@@ -52,7 +52,17 @@ export type EvidenceNode = {
   document_id: string;
   page_id: string;
   page_number: number;
-  node_type: "text_block" | "table" | "section" | "table_cell" | "caption";
+  node_type:
+    | "text_block"
+    | "table"
+    | "section"
+    | "table_cell"
+    | "caption"
+    | "ocr_text_block"
+    | "figure"
+    | "chart"
+    | "visual_summary"
+    | "metric_value";
   text: string;
   bbox: [number, number, number, number];
   reading_order: number;
@@ -243,4 +253,18 @@ export type PrepareDemoResponse = {
     status: string;
     output_summary: string;
   }>;
+};
+
+export type V2Capability = {
+  name: string;
+  status: string;
+  phase: string;
+  evidence: string;
+};
+
+export type V2StatusResponse = {
+  version: string;
+  batch: string;
+  status: string;
+  capabilities: V2Capability[];
 };

@@ -908,6 +908,76 @@ h2 {
   font-size: 15px;
 }
 
+.v2-capability-panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.capability-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.capability-heading h3 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.capability-heading span {
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 8px;
+  white-space: nowrap;
+}
+
+.capability-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.capability-item {
+  display: grid;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.capability-item div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.capability-item strong {
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.capability-item span {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.capability-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
 @media (max-width: 980px) {
   .workspace {
     grid-template-columns: 1fr;

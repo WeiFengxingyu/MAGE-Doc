@@ -44,10 +44,10 @@ V1 已完成：
 | Phase 2 | Vision Grounding | 已完成 |
 | Phase 3 | Metric Graph | 已完成 |
 | Phase 4 | Multi-Document Collection | 已完成 |
-| Phase 5 | MCP Tool Server | 待开始 |
-| Phase 6 | Benchmark Adapter | 待开始 |
-| Phase 7 | Failure Diagnosis | 待开始 |
-| Phase 8 | V2 Release Polish | 待开始 |
+| Phase 5 | MCP Tool Server | 已完成 |
+| Phase 6 | Benchmark Adapter | 已完成 |
+| Phase 7 | Failure Diagnosis | 已完成 |
+| Phase 8 | V2 Release Polish | 已完成 |
 
 ### 下一步
 
@@ -124,3 +124,66 @@ V2 Phase 1 到 Phase 4 已按“详细设计 -> 实现 -> 验证 -> 记录”的
 进入 V2 Phase 5：MCP Tool Server。
 
 Phase 5 必须先写 `docs/v2/phase05-mcp-tool-server-detailed-design.md`，再实现可本地 smoke 的 MCP-compatible tool server。
+
+## 2026-06-26：Phase 5-8 闭环
+
+### 当前阶段
+
+V2 Phase 5 到 Phase 8 已按“详细设计 -> 实现 -> 验证 -> 记录”的工作流完成。
+
+### Phase 5：MCP Tool Server
+
+产出：
+
+- 新增 `docs/v2/phase05-mcp-tool-server-detailed-design.md`。
+- 新增 MCP-compatible service：`backend/app/services/v2_mcp.py`。
+- 新增 V2 API router：`backend/app/api/v2.py`。
+- 新增 API：
+  - `GET /api/v2/mcp/tools`
+  - `POST /api/v2/mcp/call`
+  - `POST /api/v2/mcp/smoke/{document_id}`
+- MCP 工具包括 `search_doc`、`inspect_page`、`read_table`、`build_evidence_pack`、`verify_claims`。
+
+### Phase 6：Benchmark Adapter
+
+产出：
+
+- 新增 `docs/v2/phase06-benchmark-adapter-detailed-design.md`。
+- 新增 `eval/benchmark_adapter.py`。
+- 新增 benchmark JSONL fixture：`eval/cases/sample_benchmark_cases.jsonl`。
+- 扩展 `eval/run_eval.py`，新增 `v2_multimodal_graph` strategy。
+- 生成 V2 benchmark report：
+  - `eval/reports/v2_benchmark_report.json`
+  - `eval/reports/v2_benchmark_report.md`
+
+### Phase 7：Failure Diagnosis
+
+产出：
+
+- 新增 `docs/v2/phase07-failure-diagnosis-detailed-design.md`。
+- 新增 `backend/app/services/v2_failure_diagnosis.py`。
+- 新增 API：
+  - `POST /api/v2/failure-diagnosis`
+- Eval report 中加入 `failure_summary`，包含 distribution 和 per-case diagnosis。
+
+### Phase 8：V2 Release Polish
+
+产出：
+
+- 新增 `docs/v2/phase08-v2-release-polish-detailed-design.md`。
+- 新增 `docs/v2/v2-demo-runbook.md`。
+- 新增 `docs/v2/v2-resume-bullets.md`。
+- Workbench 新增 V2 capability status panel。
+- README 更新 V2 完成状态和 V2 文档入口。
+- `eval/README.md` 更新 V2 评测命令。
+
+### 验证记录
+
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests\test_v2_platform.py`：4 passed，1 warning。
+- `backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v2_benchmark_report.json`：生成 V2 JSON/Markdown report。
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests`：43 passed，1 warning。
+- `npm run build`：Next.js production build 通过。
+
+### 完成状态
+
+V2 Phase 5-8 已完成实现、测试、报告和发布文档，等待提交同步。

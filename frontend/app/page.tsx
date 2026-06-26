@@ -1,4 +1,4 @@
-import { getApiStatus } from "@/lib/api";
+import { getApiStatus, getV2Status } from "@/lib/api";
 import { listDocuments, listPageTables, listPageTextBlocks, listPages } from "@/lib/api";
 import { DocumentList } from "@/components/document-list";
 import { DocumentWorkbench } from "@/components/document-workbench";
@@ -8,9 +8,9 @@ const pipeline = [
   "Upload",
   "Render",
   "Parse",
-  "Retrieve",
-  "Ask",
-  "Cite",
+  "Graph",
+  "Agent",
+  "Evaluate",
 ];
 
 async function StatusPanel() {
@@ -42,6 +42,36 @@ async function StatusPanel() {
   }
 }
 
+async function V2CapabilityPanel() {
+  try {
+    const status = await getV2Status();
+    return (
+      <div className="v2-capability-panel">
+        <div className="capability-heading">
+          <div>
+            <p className="eyebrow">V2 Platform</p>
+            <h3>{status.batch}</h3>
+          </div>
+          <span>{status.capabilities.length}/8</span>
+        </div>
+        <div className="capability-grid">
+          {status.capabilities.map((capability) => (
+            <div className="capability-item" key={capability.name}>
+              <div>
+                <strong>{capability.name}</strong>
+                <span>{capability.phase}</span>
+              </div>
+              <p>{capability.evidence}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  } catch {
+    return null;
+  }
+}
+
 export default function Home() {
   const documentsPromise = listDocuments().catch(() => []);
 
@@ -49,18 +79,18 @@ export default function Home() {
     <main className="shell">
       <section className="topbar">
         <div>
-          <p className="eyebrow">V0 Foundation</p>
+          <p className="eyebrow">V2 Advanced Multimodal Agent Platform</p>
           <h1>MAGE-Doc</h1>
           <p className="subtitle">
             Multimodal Agentic RAG for long-PDF reasoning with evidence graphs.
           </p>
         </div>
-        <div className="phase-badge">Phase 8</div>
+        <div className="phase-badge">V2 Complete</div>
       </section>
 
       <section className="workspace">
         <aside className="panel pipeline-panel">
-          <h2>V0 Pipeline</h2>
+          <h2>Core Pipeline</h2>
           <div className="steps">
             {pipeline.map((step, index) => (
               <div className="step" key={step}>
@@ -91,8 +121,9 @@ export default function Home() {
           <StatusPanel />
           <div className="note">
             <p>Current scope</p>
-            <strong>V0 demo ready workflow</strong>
+            <strong>V2 OCR, vision, MCP, benchmark, diagnosis</strong>
           </div>
+          <V2CapabilityPanel />
         </aside>
       </section>
     </main>

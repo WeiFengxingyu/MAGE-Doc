@@ -1,0 +1,248 @@
+{
+  "case_count": 2,
+  "result_count": 6,
+  "metrics": {
+    "v0_agent_baseline": {
+      "case_count": 2,
+      "answer_term_hit_rate": 0.8333,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 1.0,
+      "average_tool_calls": 4,
+      "average_latency_ms": 366.5
+    },
+    "v1_evidence_pack": {
+      "case_count": 2,
+      "answer_term_hit_rate": 1.0,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 0.0,
+      "average_tool_calls": 1,
+      "average_latency_ms": 147,
+      "evidence_pack_context_hit_rate": 1.0
+    },
+    "v2_multimodal_graph": {
+      "case_count": 2,
+      "answer_term_hit_rate": 1.0,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 1.0,
+      "average_tool_calls": 4,
+      "average_latency_ms": 120,
+      "evidence_pack_context_hit_rate": 1.0
+    }
+  },
+  "failure_summary": {
+    "case_count": 2,
+    "result_count": 6,
+    "distribution": {
+      "passed": 4,
+      "unsupported_claim": 2
+    },
+    "failed_count": 2,
+    "passed_count": 4,
+    "diagnoses": [
+      {
+        "case_id": "sample_table_revenue_2026",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "sample_table_revenue_2026",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "sample_table_revenue_2026",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "sample_text_enterprise_demand",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "sample_text_enterprise_demand",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "sample_text_enterprise_demand",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      }
+    ]
+  },
+  "results": [
+    {
+      "case_id": "sample_table_revenue_2026",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 628
+    },
+    {
+      "case_id": "sample_table_revenue_2026",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 172,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "sample_table_revenue_2026",
+      "strategy": "v2_multimodal_graph",
+      "answer": "Revenue 2026: 128 Metric\t2025\t2026\nRevenue\t100\t128\nMargin\t18%\t22% Metric\n2025\n2026 100 Revenue 2025: 100 Revenue increased because enterprise demand improved. Table 1. Revenue summary Metric\n2025\n2026 Revenue\n100\n128 Margin\n18%\n22% Metric 2025 2026 Revenue 128 Margin 22% Table 1. Revenue summary Revenue\n100\n128 Table 1. Revenue summary",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 121,
+      "evidence_pack_context_hit": 1.0,
+      "evidence": [
+        {
+          "document_id": "e30fa2a3-ce33-4aac-ba7b-991169bad505",
+          "node_id": "05dd34cb-8372-4c91-b760-57d55ed4edbd",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "e30fa2a3-ce33-4aac-ba7b-991169bad505",
+          "node_id": "a6b5a5fe-0011-43b9-baa2-191ab59ab277",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "e30fa2a3-ce33-4aac-ba7b-991169bad505",
+          "node_id": "4daecbb1-5d1b-4c79-8058-c4ce7f5d030e",
+          "page_number": 1,
+          "bbox": [
+            66.0,
+            132.25,
+            268.239990234375,
+            145.99000549316406
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "sample_text_enterprise_demand",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 105
+    },
+    {
+      "case_id": "sample_text_enterprise_demand",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 122,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "sample_text_enterprise_demand",
+      "strategy": "v2_multimodal_graph",
+      "answer": "Revenue increased because enterprise demand improved. Revenue 2026: 128 Revenue\n100\n128 Metric\t2025\t2026\nRevenue\t100\t128\nMargin\t18%\t22% Table 1. Revenue summary 1. Financial Highlights Revenue increased because enterprise demand improved. Revenue Chart candidate on page 1 100 Revenue 2025: 100 Metric\n2025\n2026 Margin\n18%\n22% Table 1. Revenue summary Revenue\n100\n128 Margin\n18%\n22%",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 119,
+      "evidence_pack_context_hit": 1.0,
+      "evidence": [
+        {
+          "document_id": "e30fa2a3-ce33-4aac-ba7b-991169bad505",
+          "node_id": "5b7c544e-a779-4504-a291-388352b37b82",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            58.17499923706055,
+            345.51593017578125,
+            73.28900146484375
+          ]
+        },
+        {
+          "document_id": "e30fa2a3-ce33-4aac-ba7b-991169bad505",
+          "node_id": "05dd34cb-8372-4c91-b760-57d55ed4edbd",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "e30fa2a3-ce33-4aac-ba7b-991169bad505",
+          "node_id": "5fdef91b-cd37-4edd-b629-3545e9f0b27d",
+          "page_number": 1,
+          "bbox": [
+            66.0,
+            160.25,
+            262.67999267578125,
+            173.99000549316406
+          ]
+        }
+      ]
+    }
+  ]
+}
