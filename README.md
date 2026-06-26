@@ -47,6 +47,13 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V2 Demo Runbook](docs/v2/v2-demo-runbook.md)
 - [V2 Resume Bullets](docs/v2/v2-resume-bullets.md)
 - [V2 Benchmark Report](eval/reports/v2_benchmark_report.md)
+- [V3 Outline Design](docs/v3/v3-outline-design.md)
+- [V3 Implementation Plan](docs/v3/v3-implementation-plan.md)
+- [V3 Batch 4 Worklog](docs/v3/batch4-worklog.md)
+- [V3 Phase 1 Detailed Design](docs/v3/phase01-failure-taxonomy-detailed-design.md)
+- [V3 Phase 2 Detailed Design](docs/v3/phase02-evidence-sufficiency-detailed-design.md)
+- [V3 Phase 3 Detailed Design](docs/v3/phase03-repair-policy-engine-detailed-design.md)
+- [V3 Phase 4 Detailed Design](docs/v3/phase04-self-correcting-agent-loop-detailed-design.md)
 - [V0 Phase 0 Detailed Design](docs/v0/phase00-project-skeleton-detailed-design.md)
 - [V0 Phase 1 Detailed Design](docs/v0/phase01-document-upload-detailed-design.md)
 - [V0 Phase 2 Detailed Design](docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md)
@@ -234,4 +241,22 @@ Run V2 evaluation:
 
 ```powershell
 backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v2_benchmark_report.json
+```
+
+## V3 Phase 1-4 Status
+
+V3 Phase 1-4 Failure-Aware Self-Correcting Agentic RAG foundation is complete:
+
+- Failure Taxonomy 2.0 emits structured diagnosis with severity, confidence, signals, and repair candidates.
+- Evidence Sufficiency Scoring labels evidence as sufficient, partial, or insufficient with missing signals and recommended policy.
+- Repair Policy Engine maps diagnosis reasons to executable repair actions such as query rewrite, node type expansion, graph depth expansion, citation rerank, and conservative answer rewrite.
+- Self-Correcting Agent API runs initial evidence pack, verification, diagnosis, repair plan, repair attempt, final sufficiency, and repair trace.
+
+Core V3 API:
+
+```text
+POST /api/v3/failure-taxonomy
+POST /api/v3/sufficiency-score
+POST /api/v3/repair-plan
+POST /api/v3/documents/{document_id}/self-correcting-questions
 ```
