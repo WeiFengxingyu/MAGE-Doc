@@ -15,7 +15,15 @@ from app.services.documents import get_document
 from app.services.evidence import TABLE_NODE_TYPE, _json_loads, _node_to_response
 from app.services.pages import get_page
 
-DEFAULT_NODE_TYPES = {"text_block", "table"}
+DEFAULT_NODE_TYPES = {
+    "text_block",
+    "table",
+    "ocr_text_block",
+    "figure",
+    "chart",
+    "visual_summary",
+    "metric_value",
+}
 ASCII_TOKEN_PATTERN = re.compile(r"[A-Za-z0-9_]+")
 CJK_PATTERN = re.compile(r"[\u4e00-\u9fff]")
 TABLE_QUERY_TERMS = {"table", "metric", "revenue", "income", "margin", "表", "指标", "收入", "利润"}

@@ -11,6 +11,7 @@ from app.schemas.graph import DocumentGraphResponse, GraphBuildResponse, NodeNei
 from app.schemas.page import PageResponse
 from app.schemas.pipeline import PrepareDemoResponse
 from app.schemas.trace import AgentTraceRunDetailResponse, AgentTraceRunSummaryResponse
+from app.schemas.v2 import MetricGraphResponse, OcrPipelineResponse, OcrRunResponse, VisionGroundingResponse
 from app.schemas.tools import (
     InspectPageResponse,
     ReadTableResponse,
@@ -44,6 +45,9 @@ from app.services.retrieval import (
     verify_answer_tool,
 )
 from app.services.trace_store import get_trace_run_detail, list_trace_runs
+from app.services.v2_ocr import list_ocr_runs, list_ocr_text_blocks, run_document_ocr
+from app.services.v2_metric import build_metric_graph, list_metric_values
+from app.services.v2_vision import list_visual_nodes, run_vision_grounding
 
 router = APIRouter(prefix="/api/documents", tags=["documents"])
 
@@ -123,6 +127,63 @@ def document_tables(
     db: Session = Depends(get_db),
 ) -> list[EvidenceNodeResponse]:
     return list_document_tables(db, document_id)
+
+
+@router.post("/{document_id}/ocr", response_model=OcrPipelineResponse)
+def run_ocr(
+    document_id: str,
+    min_text_chars: int = 20,
+    db: Session = Depends(get_db),
+) -> OcrPipelineResponse:
+    return run_document_ocr(db, document_id, min_text_chars=min_text_chars)
+
+
+@router.get("/{document_id}/ocr-runs", response_model=list[OcrRunResponse])
+def document_ocr_runs(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> list[OcrRunResponse]:
+    return list_ocr_runs(db, document_id)
+
+
+@router.get("/{document_id}/ocr-text-blocks", response_model=list[EvidenceNodeResponse])
+def document_ocr_text_blocks(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> list[EvidenceNodeResponse]:
+    return list_ocr_text_blocks(db, document_id)
+
+
+@router.post("/{document_id}/vision-grounding", response_model=VisionGroundingResponse)
+def vision_grounding(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> VisionGroundingResponse:
+    return run_vision_grounding(db, document_id)
+
+
+@router.get("/{document_id}/visual-nodes", response_model=list[EvidenceNodeResponse])
+def document_visual_nodes(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> list[EvidenceNodeResponse]:
+    return list_visual_nodes(db, document_id)
+
+
+@router.post("/{document_id}/metric-graph/build", response_model=MetricGraphResponse)
+def metric_graph_build(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> MetricGraphResponse:
+    return build_metric_graph(db, document_id)
+
+
+@router.get("/{document_id}/metric-values", response_model=list[EvidenceNodeResponse])
+def document_metric_values(
+    document_id: str,
+    db: Session = Depends(get_db),
+) -> list[EvidenceNodeResponse]:
+    return list_metric_values(db, document_id)
 
 
 @router.get("/{document_id}/search", response_model=SearchResponse)

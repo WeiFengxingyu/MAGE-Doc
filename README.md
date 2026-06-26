@@ -208,17 +208,17 @@ backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v1_eval_
 
 ## V2 Status
 
-V2 Advanced Multimodal Agent Platform planning has started:
+V2 Phase 1-4 Advanced Multimodal Agent Platform foundation is complete:
 
-- OCR substrate for scanned PDFs.
-- Vision grounding for figure/chart evidence.
-- Metric graph for structured numeric reasoning.
-- Multi-document collection retrieval and citations.
+- OCR substrate for scanned PDFs with `ocr_text_block` evidence nodes.
+- Vision grounding for chart and visual summary evidence.
+- Metric graph for structured numeric reasoning with `metric_value` nodes.
+- Multi-document collection retrieval with document metadata.
 - MCP tool server for external Agent access.
 - Benchmark adapter and failure diagnosis.
 
 Next phase:
 
 ```text
-V2 Phase 1: OCR Substrate
+V2 Phase 5: MCP Tool Server
 ```

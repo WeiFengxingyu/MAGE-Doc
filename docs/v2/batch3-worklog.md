@@ -40,10 +40,10 @@ V1 已完成：
 
 | Phase | 名称 | 状态 |
 | --- | --- | --- |
-| Phase 1 | OCR Substrate | 待开始 |
-| Phase 2 | Vision Grounding | 待开始 |
-| Phase 3 | Metric Graph | 待开始 |
-| Phase 4 | Multi-Document Collection | 待开始 |
+| Phase 1 | OCR Substrate | 已完成 |
+| Phase 2 | Vision Grounding | 已完成 |
+| Phase 3 | Metric Graph | 已完成 |
+| Phase 4 | Multi-Document Collection | 已完成 |
 | Phase 5 | MCP Tool Server | 待开始 |
 | Phase 6 | Benchmark Adapter | 待开始 |
 | Phase 7 | Failure Diagnosis | 待开始 |
@@ -57,3 +57,70 @@ V1 已完成：
 2. 明确 scanned-page detector、OCR adapter、OCR run model、`ocr_text_block` 节点和测试策略。
 3. 实现 OCR substrate。
 4. 验证 OCR node 能进入 search/evidence pack。
+
+## 2026-06-26：Phase 1-4 闭环
+
+### 当前阶段
+
+V2 Phase 1 到 Phase 4 已按“详细设计 -> 实现 -> 验证 -> 记录”的工作流完成。
+
+### Phase 1：OCR Substrate
+
+产出：
+
+- 新增 `OcrRun` 数据模型。
+- 新增 `ocr_text_block` evidence node type。
+- 新增 OCR mock adapter 和 scanned/low-text page detector。
+- 新增 API：
+  - `POST /api/documents/{document_id}/ocr`
+  - `GET /api/documents/{document_id}/ocr-runs`
+  - `GET /api/documents/{document_id}/ocr-text-blocks`
+- Search 默认支持 `ocr_text_block`。
+
+### Phase 2：Vision Grounding
+
+产出：
+
+- 新增 `chart` 和 `visual_summary` evidence node type。
+- 新增 mock vision grounding adapter。
+- 新增 graph edges：
+  - `visualizes`
+  - `derived_from`
+- 新增 API：
+  - `POST /api/documents/{document_id}/vision-grounding`
+  - `GET /api/documents/{document_id}/visual-nodes`
+
+### Phase 3：Metric Graph
+
+产出：
+
+- 新增 `metric_value` evidence node type。
+- 从 table matrix 中抽取 metric/year/value。
+- 新增 `derived_from` 边连接 metric value 和来源 table。
+- 新增 API：
+  - `POST /api/documents/{document_id}/metric-graph/build`
+  - `GET /api/documents/{document_id}/metric-values`
+
+### Phase 4：Multi-Document Collection
+
+产出：
+
+- 新增 `Collection` 和 `CollectionDocument` 数据模型。
+- 新增 collection API：
+  - `POST /api/collections`
+  - `GET /api/collections`
+  - `POST /api/collections/{collection_id}/documents/{document_id}`
+  - `GET /api/collections/{collection_id}/search`
+- Collection search 复用单文档 hybrid retrieval，并返回 document filename。
+
+### 验证记录
+
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests\test_v2_multimodal.py`：2 passed，1 warning。
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests`：39 passed，1 warning。
+- `npm run build`：Next.js production build 通过。
+
+### 下一步
+
+进入 V2 Phase 5：MCP Tool Server。
+
+Phase 5 必须先写 `docs/v2/phase05-mcp-tool-server-detailed-design.md`，再实现可本地 smoke 的 MCP-compatible tool server。
