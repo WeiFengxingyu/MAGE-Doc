@@ -121,35 +121,34 @@ V2 用于进一步拔高项目，但不阻塞 V1 收尾。
 
 ```text
 Batch 1: V0 Foundation
-Batch 2: V1 Evidence Graph
-Batch 3: V1 Agentic RAG
-Batch 4: V1 Workbench
-Batch 5: V1 Evaluation and Release
-Batch 6: V2 Advanced Features
+Batch 2: V1 Evidence Graph Agentic RAG
+Batch 3: V2 Advanced Multimodal Agent Platform
+Batch 4: V2 OCR and Vision Grounding
+Batch 5: V2 Collection, MCP, Benchmark, and Diagnosis
 ```
 
-当前 V0 已完成，下一步应该开始的是：
+当前 V0 和 V1 已完成，下一步应该开始的是：
 
-> **Batch 2：V1 Evidence Graph Agentic RAG**
+> **Batch 3：V2 Advanced Multimodal Agent Platform**
 
 原因：
 
 - V0 已经打通上传、渲染、解析、检索、问答、引用和高亮。
-- V1 可以直接基于已有证据节点构建 graph，而不是重新造底层 demo。
-- Evidence graph、Agent trace、claim verification 和 evaluation 是项目最能加分的深度部分。
+- V1 已经完成 evidence graph、hybrid retrieval、evidence pack、trace store、claim verification、evaluation 和 workbench polish。
+- V2 可以在 V1 底座上继续扩展 OCR、vision grounding、multi-document collection、MCP server、benchmark adapter 和 failure diagnosis。
 
 ## 7. 当前执行入口
 
-V1 的执行入口已经拆分为独立文档：
+V2 的执行入口已经拆分为独立文档：
 
-- `docs/v1/v1-outline-design.md`：V1 概要设计。
-- `docs/v1/v1-implementation-plan.md`：V1 分阶段实现计划。
-- `docs/v1/batch2-worklog.md`：V1 大阶段工作日志。
+- `docs/v2/v2-outline-design.md`：V2 概要设计。
+- `docs/v2/v2-implementation-plan.md`：V2 分阶段实现计划。
+- `docs/v2/batch3-worklog.md`：V2 大阶段工作日志。
 
 推荐下一步：
 
 ```text
-V1 Phase 1: Evidence Graph 数据模型
+V2 Phase 1: OCR Substrate
 ```
 
-Phase 1 必须先写详细设计文档，再实现 edge table、graph service、graph build API 和基础邻域查询。
+Phase 1 必须先写详细设计文档，再实现 scanned-page detector、OCR adapter、OCR run model、`ocr_text_block` evidence nodes 和检索闭环。

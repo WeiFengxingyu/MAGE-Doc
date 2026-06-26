@@ -121,3 +121,24 @@ V1 的入口文档：
 | Phase 6 | Claim Verification | `docs/v1/phase06-claim-verification-detailed-design.md` |
 | Phase 7 | Evaluation Harness | `docs/v1/phase07-evaluation-harness-detailed-design.md` |
 | Phase 8 | V1 Workbench Polish | `docs/v1/phase08-v1-workbench-polish-detailed-design.md` |
+
+## 9. V2 Phase 列表
+
+V2 对应 Batch 3，目标是在 V1 evidence graph agent 基础上升级为 Advanced Multimodal Agent Platform。
+
+V2 的入口文档：
+
+- 概要设计：`docs/v2/v2-outline-design.md`
+- 分阶段计划：`docs/v2/v2-implementation-plan.md`
+- 工作日志：`docs/v2/batch3-worklog.md`
+
+| Phase | 名称 | 详细设计 |
+| --- | --- | --- |
+| Phase 1 | OCR Substrate | `docs/v2/phase01-ocr-substrate-detailed-design.md` |
+| Phase 2 | Vision Grounding | `docs/v2/phase02-vision-grounding-detailed-design.md` |
+| Phase 3 | Metric Graph | `docs/v2/phase03-metric-graph-detailed-design.md` |
+| Phase 4 | Multi-Document Collection | `docs/v2/phase04-multi-document-collection-detailed-design.md` |
+| Phase 5 | MCP Tool Server | `docs/v2/phase05-mcp-tool-server-detailed-design.md` |
+| Phase 6 | Benchmark Adapter | `docs/v2/phase06-benchmark-adapter-detailed-design.md` |
+| Phase 7 | Failure Diagnosis | `docs/v2/phase07-failure-diagnosis-detailed-design.md` |
+| Phase 8 | V2 Release Polish | `docs/v2/phase08-v2-release-polish-detailed-design.md` |

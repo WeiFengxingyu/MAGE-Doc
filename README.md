@@ -33,6 +33,9 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V1 Phase 8 Detailed Design](docs/v1/phase08-v1-workbench-polish-detailed-design.md)
 - [V1 Demo Runbook](docs/v1/v1-demo-runbook.md)
 - [V1 Evaluation Report](eval/reports/v1_eval_report.md)
+- [V2 Outline Design](docs/v2/v2-outline-design.md)
+- [V2 Implementation Plan](docs/v2/v2-implementation-plan.md)
+- [V2 Batch 3 Worklog](docs/v2/batch3-worklog.md)
 - [V0 Phase 0 Detailed Design](docs/v0/phase00-project-skeleton-detailed-design.md)
 - [V0 Phase 1 Detailed Design](docs/v0/phase01-document-upload-detailed-design.md)
 - [V0 Phase 2 Detailed Design](docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md)
@@ -201,4 +204,21 @@ Run V1 evaluation:
 
 ```powershell
 backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v1_eval_report.json
+```
+
+## V2 Status
+
+V2 Advanced Multimodal Agent Platform planning has started:
+
+- OCR substrate for scanned PDFs.
+- Vision grounding for figure/chart evidence.
+- Metric graph for structured numeric reasoning.
+- Multi-document collection retrieval and citations.
+- MCP tool server for external Agent access.
+- Benchmark adapter and failure diagnosis.
+
+Next phase:
+
+```text
+V2 Phase 1: OCR Substrate
 ```
