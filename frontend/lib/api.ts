@@ -6,6 +6,7 @@ import type {
   PrepareDemoResponse,
   QuestionAnswerResponse,
   SearchResponse,
+  SelfCorrectingQuestionResponse,
   V2StatusResponse,
 } from "@/types/api";
 
@@ -233,6 +234,34 @@ export async function askQuestion({
   }
 
   return response.json() as Promise<QuestionAnswerResponse>;
+}
+
+export async function askSelfCorrectingQuestion({
+  documentId,
+  question,
+  maxRepairRounds = 2,
+}: {
+  documentId: string;
+  question: string;
+  maxRepairRounds?: number;
+}): Promise<SelfCorrectingQuestionResponse> {
+  const response = await fetch(
+    `${API_BASE_URL}/api/v3/documents/${documentId}/self-correcting-questions`,
+    {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ question, max_repair_rounds: maxRepairRounds }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Self-correcting question request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<SelfCorrectingQuestionResponse>;
 }
 
 export function absoluteApiUrl(path: string): string {

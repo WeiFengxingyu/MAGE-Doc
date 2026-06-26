@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import {
   askQuestion,
+  askSelfCorrectingQuestion,
   prepareDemo,
   parseTables,
   parseTextBlocks,
@@ -11,7 +12,7 @@ import {
   searchEvidence,
   uploadDocument,
 } from "@/lib/api";
-import type { AskState, SearchState, UploadState } from "@/types/api";
+import type { AskState, RepairTraceState, SearchState, UploadState } from "@/types/api";
 
 export async function uploadDocumentAction(
   _previousState: UploadState,
@@ -173,6 +174,51 @@ export async function askQuestionAction(
     return {
       ok: false,
       message: error instanceof Error ? error.message : "Question request failed.",
+      question: question.trim(),
+      response: null,
+    };
+  }
+}
+
+export async function askSelfCorrectingQuestionAction(
+  _previousState: RepairTraceState,
+  formData: FormData,
+): Promise<RepairTraceState> {
+  const documentId = formData.get("document_id");
+  const question = formData.get("question");
+
+  if (typeof documentId !== "string" || documentId.length === 0) {
+    return {
+      ok: false,
+      message: "Upload a document before running V3 repair trace.",
+      question: "",
+      response: null,
+    };
+  }
+  if (typeof question !== "string" || question.trim().length === 0) {
+    return {
+      ok: false,
+      message: "Enter a question.",
+      question: "",
+      response: null,
+    };
+  }
+
+  try {
+    const response = await askSelfCorrectingQuestion({
+      documentId,
+      question: question.trim(),
+    });
+    return {
+      ok: response.final_sufficiency.label !== "insufficient",
+      message: `${response.repair_round_count} repair rounds, stop: ${response.stop_reason}.`,
+      question: question.trim(),
+      response,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error instanceof Error ? error.message : "Self-correcting request failed.",
       question: question.trim(),
       response: null,
     };

@@ -15,15 +15,22 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 ROOT = Path(__file__).resolve().parents[1]
+EVAL_ROOT = ROOT / "eval"
 BACKEND_ROOT = ROOT / "backend"
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
+if str(EVAL_ROOT) not in sys.path:
+    sys.path.insert(0, str(EVAL_ROOT))
 
 from app.db.session import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.services.v2_failure_diagnosis import diagnose_results  # noqa: E402
+from app.services.v3_failure_taxonomy import diagnose_failures  # noqa: E402
 
 DEFAULT_CASES = ROOT / "eval" / "cases" / "sample_cases.jsonl"
+DEFAULT_V3_CASES = ROOT / "eval" / "cases" / "v3_curated_cases.jsonl"
+
+import curated_benchmark  # noqa: E402
 
 
 def _draw_table(page: fitz.Page, x0: float, y0: float) -> None:
@@ -63,6 +70,10 @@ def load_cases(path: Path = DEFAULT_CASES) -> list[dict[str, Any]]:
         if line.strip():
             cases.append(json.loads(line))
     return cases
+
+
+def load_v3_cases(path: Path = DEFAULT_V3_CASES) -> list[dict[str, Any]]:
+    return curated_benchmark.load_curated_cases(path)
 
 
 def make_client(workdir: Path) -> tuple[TestClient, Any]:
@@ -196,6 +207,62 @@ def run_v2_multimodal_case(client: TestClient, document_id: str, case: dict[str,
     }
 
 
+def run_v3_self_correcting_case(client: TestClient, document_id: str, case: dict[str, Any]) -> dict[str, Any]:
+    start = time.perf_counter()
+    response = client.post(
+        f"/api/v3/documents/{document_id}/self-correcting-questions",
+        json={"question": case["question"], "max_repair_rounds": 2},
+    )
+    response.raise_for_status()
+    payload = response.json()
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    final = payload["final_sufficiency"]
+    initial = payload["initial_sufficiency"]
+    final_diagnosis = payload["final_diagnosis"]
+    recovery = 1.0 if initial["label"] != "sufficient" and final["label"] in {"partial", "sufficient"} else 0.0
+    repair_success = (
+        1.0
+        if payload["repair_round_count"] > 0 and final["score"] >= initial["score"]
+        else 0.0
+    )
+    return {
+        "case_id": case["id"],
+        "strategy": "v3_self_correcting",
+        "answer": payload["answer"],
+        "answer_term_hit": final["signals"].get("answer_term_hit", 0.0),
+        "citation_node_type_hit": final["signals"].get("citation_node_type_hit", 0.0),
+        "claim_supported": final["signals"].get("claim_supported", 0.0),
+        "tool_calls": len(payload["trace"]),
+        "latency_ms": latency_ms,
+        "evidence_pack_context_hit": final["signals"].get("evidence_pack_context_hit", 0.0),
+        "initial_sufficiency_score": initial["score"],
+        "final_sufficiency_score": final["score"],
+        "initial_sufficiency_label": initial["label"],
+        "final_sufficiency_label": final["label"],
+        "initial_failure_reason": payload["repair_rounds"][0]["diagnosis"]["reason"]
+        if payload["repair_rounds"]
+        else final_diagnosis["reason"],
+        "final_failure_reason": final_diagnosis["reason"],
+        "repair_round_count": payload["repair_round_count"],
+        "repair_success": repair_success,
+        "recovery": recovery,
+        "stop_reason": payload["stop_reason"],
+        "repair_actions": [
+            repair_round["selected_action"]["action"]
+            for repair_round in payload["repair_rounds"]
+        ],
+        "evidence": [
+            {
+                "document_id": document_id,
+                "node_id": citation["node_id"],
+                "page_number": citation["page_number"],
+                "bbox": citation["bbox"],
+            }
+            for citation in payload["citations"]
+        ],
+    }
+
+
 def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
     by_strategy: dict[str, list[dict[str, Any]]] = {}
     for result in results:
@@ -215,11 +282,59 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
                 mean(row.get("evidence_pack_context_hit", 0.0) for row in rows),
                 4,
             )
+        if any("repair_round_count" in row for row in rows):
+            metrics[strategy]["initial_sufficiency_score"] = round(
+                mean(row.get("initial_sufficiency_score", 0.0) for row in rows),
+                4,
+            )
+            metrics[strategy]["final_sufficiency_score"] = round(
+                mean(row.get("final_sufficiency_score", 0.0) for row in rows),
+                4,
+            )
+            metrics[strategy]["average_repair_rounds"] = round(
+                mean(row.get("repair_round_count", 0.0) for row in rows),
+                4,
+            )
+            metrics[strategy]["repair_success_rate"] = round(
+                mean(row.get("repair_success", 0.0) for row in rows),
+                4,
+            )
+            metrics[strategy]["recovery_rate"] = round(
+                mean(row.get("recovery", 0.0) for row in rows),
+                4,
+            )
     return metrics
 
 
+def reliability_summary(results: list[dict[str, Any]]) -> dict[str, Any]:
+    v3_rows = [result for result in results if result.get("strategy") == "v3_self_correcting"]
+    before: dict[str, int] = {}
+    after: dict[str, int] = {}
+    for row in v3_rows:
+        before_reason = str(row.get("initial_failure_reason") or "unknown")
+        after_reason = str(row.get("final_failure_reason") or "unknown")
+        before[before_reason] = before.get(before_reason, 0) + 1
+        after[after_reason] = after.get(after_reason, 0) + 1
+    return {
+        "case_count": len(v3_rows),
+        "repair_case_count": sum(1 for row in v3_rows if row.get("repair_round_count", 0) > 0),
+        "recovery_rate": round(mean(row.get("recovery", 0.0) for row in v3_rows), 4)
+        if v3_rows
+        else 0.0,
+        "repair_success_rate": round(mean(row.get("repair_success", 0.0) for row in v3_rows), 4)
+        if v3_rows
+        else 0.0,
+        "average_repair_rounds": round(mean(row.get("repair_round_count", 0.0) for row in v3_rows), 4)
+        if v3_rows
+        else 0.0,
+        "failure_before_distribution": dict(sorted(before.items())),
+        "failure_after_distribution": dict(sorted(after.items())),
+    }
+
+
 def markdown_report(report: dict[str, Any]) -> str:
-    lines = ["# MAGE-Doc V2 Evaluation Report", ""]
+    title = "MAGE-Doc V3 Reliability Report" if "reliability_summary" in report else "MAGE-Doc V2 Evaluation Report"
+    lines = [f"# {title}", ""]
     lines.append(f"Case count: {report['case_count']}")
     lines.append("")
     lines.append("| Strategy | Answer term hit | Citation type hit | Claim supported | Avg tool calls | Avg latency ms |")
@@ -246,11 +361,51 @@ def markdown_report(report: dict[str, Any]) -> str:
         for reason, count in distribution.items():
             lines.append(f"| {reason} | {count} |")
         lines.append("")
+    reliability = report.get("reliability_summary", {})
+    if reliability:
+        lines.append("## Reliability Summary")
+        lines.append("")
+        lines.append(f"Repair cases: {reliability['repair_case_count']} / {reliability['case_count']}")
+        lines.append(f"Recovery rate: {reliability['recovery_rate']:.2f}")
+        lines.append(f"Repair success rate: {reliability['repair_success_rate']:.2f}")
+        lines.append(f"Average repair rounds: {reliability['average_repair_rounds']:.2f}")
+        lines.append("")
+        lines.append("### Failure Before")
+        lines.append("")
+        lines.append("| Reason | Count |")
+        lines.append("| --- | --- |")
+        for reason, count in reliability.get("failure_before_distribution", {}).items():
+            lines.append(f"| {reason} | {count} |")
+        lines.append("")
+        lines.append("### Failure After")
+        lines.append("")
+        lines.append("| Reason | Count |")
+        lines.append("| --- | --- |")
+        for reason, count in reliability.get("failure_after_distribution", {}).items():
+            lines.append(f"| {reason} | {count} |")
+        lines.append("")
+        v3_rows = [row for row in report.get("results", []) if row.get("strategy") == "v3_self_correcting"]
+        if v3_rows:
+            lines.append("## V3 Repair Cases")
+            lines.append("")
+            lines.append("| Case | Initial | Final | Rounds | Actions |")
+            lines.append("| --- | --- | --- | --- | --- |")
+            for row in v3_rows:
+                lines.append(
+                    "| {case} | {initial:.2f} | {final:.2f} | {rounds} | {actions} |".format(
+                        case=row["case_id"],
+                        initial=row.get("initial_sufficiency_score", 0.0),
+                        final=row.get("final_sufficiency_score", 0.0),
+                        rounds=row.get("repair_round_count", 0),
+                        actions=", ".join(row.get("repair_actions", [])) or "-",
+                    )
+                )
+            lines.append("")
     return "\n".join(lines)
 
 
 def run_eval(cases_path: Path = DEFAULT_CASES, output: Path | None = None) -> dict[str, Any]:
-    cases = load_cases(cases_path)
+    cases = load_v3_cases(cases_path) if cases_path.name.startswith("v3_") else load_cases(cases_path)
     with tempfile.TemporaryDirectory() as temp_dir:
         workdir = Path(temp_dir)
         client, engine = make_client(workdir)
@@ -262,11 +417,15 @@ def run_eval(cases_path: Path = DEFAULT_CASES, output: Path | None = None) -> di
                 results.append(run_v0_agent_case(client, document["id"], case))
                 results.append(run_v1_pack_case(client, document["id"], case))
                 results.append(run_v2_multimodal_case(client, document["id"], case))
+                results.append(run_v3_self_correcting_case(client, document["id"], case))
             report = {
                 "case_count": len(cases),
                 "result_count": len(results),
                 "metrics": aggregate(results),
                 "failure_summary": diagnose_results(cases, results),
+                "v3_failure_taxonomy": diagnose_failures(cases, results),
+                "reliability_summary": reliability_summary(results),
+                "curated_failure_targets": curated_benchmark.case_failure_targets(cases),
                 "results": results,
             }
         finally:
@@ -282,8 +441,8 @@ def run_eval(cases_path: Path = DEFAULT_CASES, output: Path | None = None) -> di
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cases", type=Path, default=DEFAULT_CASES)
-    parser.add_argument("--output", type=Path, default=ROOT / "eval" / "reports" / "v1_eval_report.json")
+    parser.add_argument("--cases", type=Path, default=DEFAULT_V3_CASES)
+    parser.add_argument("--output", type=Path, default=ROOT / "eval" / "reports" / "v3_reliability_report.json")
     args = parser.parse_args()
     report = run_eval(cases_path=args.cases, output=args.output)
     print(json.dumps({"case_count": report["case_count"], "metrics": report["metrics"]}, indent=2))

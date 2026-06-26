@@ -147,7 +147,7 @@ export type SearchState = {
 
 export type Citation = {
   node_id: string;
-  node_type: "text_block" | "table";
+  node_type: string;
   page_number: number;
   bbox: [number, number, number, number];
   snippet: string;
@@ -240,6 +240,56 @@ export type AskState = {
   message: string;
   question: string;
   response: QuestionAnswerResponse | null;
+};
+
+export type SufficiencyScore = {
+  score: number;
+  label: "sufficient" | "partial" | "insufficient";
+  signals: Record<string, number>;
+  missing_signals: string[];
+  recommended_policy: string | null;
+};
+
+export type V3Diagnosis = {
+  case_id: string;
+  strategy: string;
+  reason: string;
+  severity: string;
+  confidence: number;
+  message: string;
+  signals: Record<string, number>;
+  repair_candidates: string[];
+};
+
+export type RepairPlan = {
+  action_count: number;
+  actions: Array<Record<string, unknown>>;
+  has_repair: boolean;
+};
+
+export type RepairRound = {
+  round_index: number;
+  diagnosis: V3Diagnosis;
+  repair_plan: RepairPlan;
+  selected_action: Record<string, unknown>;
+  before_sufficiency: SufficiencyScore;
+  after_sufficiency: SufficiencyScore;
+};
+
+export type SelfCorrectingQuestionResponse = QuestionAnswerResponse & {
+  initial_sufficiency: SufficiencyScore;
+  final_sufficiency: SufficiencyScore;
+  final_diagnosis: V3Diagnosis;
+  repair_round_count: number;
+  repair_rounds: RepairRound[];
+  stop_reason: string;
+};
+
+export type RepairTraceState = {
+  ok: boolean;
+  message: string;
+  question: string;
+  response: SelfCorrectingQuestionResponse | null;
 };
 
 export type PrepareDemoResponse = {

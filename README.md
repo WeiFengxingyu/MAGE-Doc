@@ -54,6 +54,13 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [V3 Phase 2 Detailed Design](docs/v3/phase02-evidence-sufficiency-detailed-design.md)
 - [V3 Phase 3 Detailed Design](docs/v3/phase03-repair-policy-engine-detailed-design.md)
 - [V3 Phase 4 Detailed Design](docs/v3/phase04-self-correcting-agent-loop-detailed-design.md)
+- [V3 Phase 5 Detailed Design](docs/v3/phase05-curated-benchmark-suite-detailed-design.md)
+- [V3 Phase 6 Detailed Design](docs/v3/phase06-reliability-evaluation-detailed-design.md)
+- [V3 Phase 7 Detailed Design](docs/v3/phase07-workbench-repair-trace-detailed-design.md)
+- [V3 Phase 8 Detailed Design](docs/v3/phase08-v3-release-polish-detailed-design.md)
+- [V3 Demo Runbook](docs/v3/v3-demo-runbook.md)
+- [V3 Resume Bullets](docs/v3/v3-resume-bullets.md)
+- [V3 Reliability Report](eval/reports/v3_reliability_report.md)
 - [V0 Phase 0 Detailed Design](docs/v0/phase00-project-skeleton-detailed-design.md)
 - [V0 Phase 1 Detailed Design](docs/v0/phase01-document-upload-detailed-design.md)
 - [V0 Phase 2 Detailed Design](docs/v0/phase02-page-rendering-coordinate-system-detailed-design.md)
@@ -243,14 +250,17 @@ Run V2 evaluation:
 backend\.venv\Scripts\python.exe eval\run_eval.py --output eval\reports\v2_benchmark_report.json
 ```
 
-## V3 Phase 1-4 Status
+## V3 Phase 1-8 Status
 
-V3 Phase 1-4 Failure-Aware Self-Correcting Agentic RAG foundation is complete:
+V3 Phase 1-8 Failure-Aware Self-Correcting Agentic RAG is complete:
 
 - Failure Taxonomy 2.0 emits structured diagnosis with severity, confidence, signals, and repair candidates.
 - Evidence Sufficiency Scoring labels evidence as sufficient, partial, or insufficient with missing signals and recommended policy.
 - Repair Policy Engine maps diagnosis reasons to executable repair actions such as query rewrite, node type expansion, graph depth expansion, citation rerank, and conservative answer rewrite.
 - Self-Correcting Agent API runs initial evidence pack, verification, diagnosis, repair plan, repair attempt, final sufficiency, and repair trace.
+- Curated benchmark suite labels expected failure modes and repair expectations.
+- Reliability evaluation compares baseline and self-correcting strategies with recovery rate, repair success rate, repair rounds, and failure before/after distribution.
+- Workbench includes a V3 Repair Trace panel for inspecting self-correction decisions.
 
 Core V3 API:
 
@@ -259,4 +269,10 @@ POST /api/v3/failure-taxonomy
 POST /api/v3/sufficiency-score
 POST /api/v3/repair-plan
 POST /api/v3/documents/{document_id}/self-correcting-questions
+```
+
+Run V3 reliability evaluation:
+
+```powershell
+backend\.venv\Scripts\python.exe eval\run_eval.py --cases eval\cases\v3_curated_cases.jsonl --output eval\reports\v3_reliability_report.json
 ```

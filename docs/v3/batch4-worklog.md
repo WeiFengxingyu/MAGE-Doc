@@ -47,10 +47,10 @@ V2 已完成：
 | Phase 2 | Evidence Sufficiency Scoring | 已完成 |
 | Phase 3 | Repair Policy Engine | 已完成 |
 | Phase 4 | Self-Correcting Agent Loop | 已完成 |
-| Phase 5 | Curated Benchmark Suite | 待开始 |
-| Phase 6 | Reliability Evaluation | 待开始 |
-| Phase 7 | Workbench Repair Trace | 待开始 |
-| Phase 8 | V3 Release Polish | 待开始 |
+| Phase 5 | Curated Benchmark Suite | 已完成 |
+| Phase 6 | Reliability Evaluation | 已完成 |
+| Phase 7 | Workbench Repair Trace | 已完成 |
+| Phase 8 | V3 Release Polish | 已完成 |
 
 ### 下一步
 
@@ -131,3 +131,61 @@ V3 Phase 1 到 Phase 4 已按“详细设计 -> 实现 -> 验证 -> 记录”的
 ### 下一步
 
 进入 V3 Phase 5：Curated Benchmark Suite。
+
+## 2026-06-26：Phase 5-8 闭环
+
+### 当前阶段
+
+V3 Phase 5 到 Phase 8 已按“详细设计 -> 实现 -> 验证 -> 记录”的工作流完成。
+
+### Phase 5：Curated Benchmark Suite
+
+产出：
+
+- 新增 `docs/v3/phase05-curated-benchmark-suite-detailed-design.md`。
+- 新增 `eval/curated_benchmark.py`。
+- 新增 curated cases：`eval/cases/v3_curated_cases.jsonl`。
+- Curated case schema 包含 `expected_failure_mode`、`repair_expectation`、tags 和 source profile。
+
+### Phase 6：Reliability Evaluation
+
+产出：
+
+- 新增 `docs/v3/phase06-reliability-evaluation-detailed-design.md`。
+- 扩展 `eval/run_eval.py`：
+  - 新增 `v3_self_correcting` strategy。
+  - 输出 reliability summary。
+  - 输出 failure before/after distribution。
+- 生成 V3 reliability report：
+  - `eval/reports/v3_reliability_report.json`
+  - `eval/reports/v3_reliability_report.md`
+
+### Phase 7：Workbench Repair Trace
+
+产出：
+
+- 新增 `docs/v3/phase07-workbench-repair-trace-detailed-design.md`。
+- 新增 `frontend/components/repair-trace-panel.tsx`。
+- Workbench 新增 V3 Repair Trace 面板。
+- 前端 action/lib/types 接入 self-correcting question API。
+- UI 展示 initial/final sufficiency、diagnosis、selected action 和 repair rounds。
+
+### Phase 8：V3 Release Polish
+
+产出：
+
+- 新增 `docs/v3/phase08-v3-release-polish-detailed-design.md`。
+- 新增 `docs/v3/v3-demo-runbook.md`。
+- 新增 `docs/v3/v3-resume-bullets.md`。
+- 更新 README 和 eval README。
+
+### 验证记录
+
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests\test_eval_harness.py`：3 passed，1 warning。
+- `backend\.venv\Scripts\python.exe eval\run_eval.py --cases eval\cases\v3_curated_cases.jsonl --output eval\reports\v3_reliability_report.json`：生成 V3 JSON/Markdown report。
+- `backend\.venv\Scripts\python.exe -m pytest backend\app\tests`：46 passed，1 warning。
+- `npm run build`：Next.js production build 通过。
+
+### 完成状态
+
+V3 Phase 5-8 已完成实现、测试、报告和发布文档，等待提交同步。

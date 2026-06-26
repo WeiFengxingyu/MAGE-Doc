@@ -23,6 +23,15 @@ def test_eval_runner_loads_cases() -> None:
     assert {case["question_type"] for case in cases} == {"table_lookup", "text_lookup"}
 
 
+def test_eval_runner_loads_v3_curated_cases() -> None:
+    runner = _load_runner()
+
+    cases = runner.load_v3_cases()
+
+    assert len(cases) >= 5
+    assert {"expected_failure_mode", "repair_expectation"}.issubset(cases[0])
+
+
 def test_eval_runner_produces_metrics(tmp_path: Path) -> None:
     runner = _load_runner()
     output = tmp_path / "report.json"
@@ -34,4 +43,6 @@ def test_eval_runner_produces_metrics(tmp_path: Path) -> None:
     assert report["case_count"] >= 2
     assert "v0_agent_baseline" in report["metrics"]
     assert "v1_evidence_pack" in report["metrics"]
+    assert "v3_self_correcting" in report["metrics"]
+    assert "reliability_summary" in report
     assert report["metrics"]["v0_agent_baseline"]["claim_supported_rate"] > 0

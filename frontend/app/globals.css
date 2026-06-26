@@ -461,7 +461,22 @@ h2 {
   padding: 16px;
 }
 
+.repair-panel {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
 .ask-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.repair-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -473,6 +488,11 @@ h2 {
   font-size: 16px;
 }
 
+.repair-header h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
 .ask-header span {
   color: var(--muted);
   font-size: 12px;
@@ -480,7 +500,21 @@ h2 {
   white-space: nowrap;
 }
 
+.repair-header span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
 .ask-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.repair-form {
   display: grid;
   grid-template-columns: minmax(220px, 1fr) auto;
   gap: 10px;
@@ -497,6 +531,87 @@ h2 {
   font: inherit;
   min-height: 82px;
   padding: 10px;
+}
+
+.repair-form input {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  padding: 10px;
+}
+
+.repair-results {
+  display: grid;
+  gap: 12px;
+}
+
+.repair-score-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.sufficiency-pill {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 8px;
+}
+
+.sufficiency-sufficient {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.sufficiency-partial {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.sufficiency-insufficient {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.repair-answer,
+.repair-round {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.repair-answer p,
+.repair-round p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.repair-rounds {
+  display: grid;
+  gap: 9px;
+}
+
+.repair-round-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.repair-round-topline span {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .answer-box {
@@ -1000,6 +1115,7 @@ h2 {
   }
 
   .ask-form,
+  .repair-form,
   .trace-item {
     grid-template-columns: 1fr;
   }

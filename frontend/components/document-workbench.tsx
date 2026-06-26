@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { AskPanel } from "@/components/ask-panel";
 import { PageViewer } from "@/components/page-viewer";
+import { RepairTracePanel } from "@/components/repair-trace-panel";
 import { RetrievalPanel } from "@/components/retrieval-panel";
 import type { Citation, DocumentRecord, EvidenceNode, PageRecord } from "@/types/api";
 
@@ -43,6 +44,7 @@ export function DocumentWorkbench({
         onCitationSelect={setSelectedCitation}
         selectedCitationId={selectedCitation?.node_id ?? null}
       />
+      <RepairTracePanel document={document} />
       <RetrievalPanel document={document} />
     </>
   );

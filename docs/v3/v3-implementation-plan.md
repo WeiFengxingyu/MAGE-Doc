@@ -114,6 +114,8 @@ Batch 4 的目标是在 V2 已闭环的平台能力上，深化可靠性：
 
 ## 8. Phase 5：Curated Benchmark Suite
 
+状态：已完成。
+
 目标：
 
 - 新增 curated benchmark JSONL schema。
@@ -127,6 +129,8 @@ Batch 4 的目标是在 V2 已闭环的平台能力上，深化可靠性：
 - README 或 runbook 说明数据来源和标注规则。
 
 ## 9. Phase 6：Reliability Evaluation
+
+状态：已完成。
 
 目标：
 
@@ -142,6 +146,8 @@ Batch 4 的目标是在 V2 已闭环的平台能力上，深化可靠性：
 
 ## 10. Phase 7：Workbench Repair Trace
 
+状态：已完成。
+
 目标：
 
 - 前端展示 self-correcting run。
@@ -155,6 +161,8 @@ Batch 4 的目标是在 V2 已闭环的平台能力上，深化可靠性：
 - 前端 build 通过。
 
 ## 11. Phase 8：V3 Release Polish
+
+状态：已完成。
 
 目标：
 

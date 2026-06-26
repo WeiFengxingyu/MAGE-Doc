@@ -1,0 +1,1159 @@
+{
+  "case_count": 5,
+  "result_count": 20,
+  "metrics": {
+    "v0_agent_baseline": {
+      "case_count": 5,
+      "answer_term_hit_rate": 0.8,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 1.0,
+      "average_tool_calls": 4,
+      "average_latency_ms": 133.4
+    },
+    "v1_evidence_pack": {
+      "case_count": 5,
+      "answer_term_hit_rate": 1.0,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 0.0,
+      "average_tool_calls": 1,
+      "average_latency_ms": 150,
+      "evidence_pack_context_hit_rate": 1.0
+    },
+    "v2_multimodal_graph": {
+      "case_count": 5,
+      "answer_term_hit_rate": 1.0,
+      "citation_node_type_hit_rate": 1.0,
+      "claim_supported_rate": 1.0,
+      "average_tool_calls": 4,
+      "average_latency_ms": 140.8,
+      "evidence_pack_context_hit_rate": 1.0
+    },
+    "v3_self_correcting": {
+      "case_count": 5,
+      "answer_term_hit_rate": 0.8,
+      "citation_node_type_hit_rate": 0.8,
+      "claim_supported_rate": 1.0,
+      "average_tool_calls": 5.4,
+      "average_latency_ms": 469,
+      "evidence_pack_context_hit_rate": 0.4,
+      "initial_sufficiency_score": 0.57,
+      "final_sufficiency_score": 0.76,
+      "average_repair_rounds": 0.8,
+      "repair_success_rate": 0.6,
+      "recovery_rate": 1.0
+    }
+  },
+  "failure_summary": {
+    "case_count": 5,
+    "result_count": 20,
+    "distribution": {
+      "citation_mismatch": 1,
+      "passed": 14,
+      "unsupported_claim": 5
+    },
+    "failed_count": 6,
+    "passed_count": 14,
+    "diagnoses": [
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "message": "All tracked benchmark signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        }
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v3_self_correcting",
+        "reason": "citation_mismatch",
+        "message": "Answer terms were present, but citations did not match expected evidence types.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 0.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        }
+      }
+    ]
+  },
+  "v3_failure_taxonomy": {
+    "case_count": 5,
+    "result_count": 20,
+    "distribution": {
+      "citation_mismatch": 1,
+      "passed": 14,
+      "unsupported_claim": 5
+    },
+    "failed_count": 6,
+    "passed_count": 14,
+    "diagnoses": [
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "severity": "high",
+        "confidence": 0.9,
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": [
+          "conservative_answer_rewrite",
+          "evidence_pack_retry"
+        ]
+      },
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_table_revenue_2026",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "severity": "high",
+        "confidence": 0.9,
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": [
+          "conservative_answer_rewrite",
+          "evidence_pack_retry"
+        ]
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_metric_margin_2026",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "severity": "high",
+        "confidence": 0.9,
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": [
+          "conservative_answer_rewrite",
+          "evidence_pack_retry"
+        ]
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_text_enterprise_demand",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "severity": "high",
+        "confidence": 0.9,
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": [
+          "conservative_answer_rewrite",
+          "evidence_pack_retry"
+        ]
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_text_risk_supply_chain",
+        "strategy": "v3_self_correcting",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v0_agent_baseline",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v1_evidence_pack",
+        "reason": "unsupported_claim",
+        "severity": "high",
+        "confidence": 0.9,
+        "message": "Claim verification did not find enough support in cited evidence.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 0.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": [
+          "conservative_answer_rewrite",
+          "evidence_pack_retry"
+        ]
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v2_multimodal_graph",
+        "reason": "passed",
+        "severity": "none",
+        "confidence": 1.0,
+        "message": "All tracked reliability signals passed.",
+        "signals": {
+          "answer_term_hit": 1.0,
+          "citation_node_type_hit": 1.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 1.0
+        },
+        "repair_candidates": []
+      },
+      {
+        "case_id": "curated_graph_revenue_context",
+        "strategy": "v3_self_correcting",
+        "reason": "citation_mismatch",
+        "severity": "medium",
+        "confidence": 0.86,
+        "message": "Answer terms were present, but citations did not match expected evidence types.",
+        "signals": {
+          "answer_term_hit": 0.6666666666666666,
+          "citation_node_type_hit": 0.0,
+          "claim_supported": 1.0,
+          "evidence_pack_context_hit": 0.0
+        },
+        "repair_candidates": [
+          "citation_rerank",
+          "required_type_filter"
+        ]
+      }
+    ]
+  },
+  "reliability_summary": {
+    "case_count": 5,
+    "repair_case_count": 3,
+    "recovery_rate": 1.0,
+    "repair_success_rate": 0.6,
+    "average_repair_rounds": 0.8,
+    "failure_before_distribution": {
+      "citation_mismatch": 3,
+      "passed": 2
+    },
+    "failure_after_distribution": {
+      "citation_mismatch": 1,
+      "passed": 4
+    }
+  },
+  "curated_failure_targets": {
+    "citation_mismatch": 2,
+    "graph_miss": 1,
+    "passed": 2
+  },
+  "results": [
+    {
+      "case_id": "curated_table_revenue_2026",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 152
+    },
+    {
+      "case_id": "curated_table_revenue_2026",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 204,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "curated_table_revenue_2026",
+      "strategy": "v2_multimodal_graph",
+      "answer": "Revenue 2026: 128 Metric\t2025\t2026\nRevenue\t100\t128\nMargin\t18%\t22% Metric\n2025\n2026 100 Revenue 2025: 100 Revenue increased because enterprise demand improved. Table 1. Revenue summary Metric\n2025\n2026 Revenue\n100\n128 Margin\n18%\n22% Metric 2025 2026 128 Margin 22% Table 1. Revenue summary Revenue\n100\n128 Table 1. Revenue summary Revenue",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 147,
+      "evidence_pack_context_hit": 1.0,
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "23bf1fc2-b852-48ec-9fb6-89d61a9795fe",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "02287030-eb42-4944-ac01-9cf67ffef934",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "66feb3de-4eeb-4282-a4e2-851dde382fbe",
+          "page_number": 1,
+          "bbox": [
+            66.0,
+            132.25,
+            268.239990234375,
+            145.99000549316406
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_table_revenue_2026",
+      "strategy": "v3_self_correcting",
+      "answer": "Based on metric_value evidence on page 1, Revenue 2026: 128",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 6,
+      "latency_ms": 419,
+      "evidence_pack_context_hit": 1.0,
+      "initial_sufficiency_score": 0.525,
+      "final_sufficiency_score": 1.0,
+      "initial_sufficiency_label": "partial",
+      "final_sufficiency_label": "sufficient",
+      "initial_failure_reason": "citation_mismatch",
+      "final_failure_reason": "passed",
+      "repair_round_count": 1,
+      "repair_success": 1.0,
+      "recovery": 1.0,
+      "stop_reason": "sufficient_after_repair",
+      "repair_actions": [
+        "citation_rerank"
+      ],
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "23bf1fc2-b852-48ec-9fb6-89d61a9795fe",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_metric_margin_2026",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 137
+    },
+    {
+      "case_id": "curated_metric_margin_2026",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 130,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "curated_metric_margin_2026",
+      "strategy": "v2_multimodal_graph",
+      "answer": "Margin 2026: 22% Metric\t2025\t2026\nRevenue\t100\t128\nMargin\t18%\t22% Metric\n2025\n2026 100 Revenue 2025: 100 Revenue increased because enterprise demand improved. Table 1. Revenue summary Metric\n2025\n2026 Revenue\n100\n128 Margin\n18%\n22% Metric 2025 2026 128 Margin 22% Table 1. Revenue summary Revenue\n100\n128 Table 1. Revenue summary Revenue",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 138,
+      "evidence_pack_context_hit": 1.0,
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "a736f34a-69db-442b-a481-8fc33e721204",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "02287030-eb42-4944-ac01-9cf67ffef934",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "66feb3de-4eeb-4282-a4e2-851dde382fbe",
+          "page_number": 1,
+          "bbox": [
+            66.0,
+            132.25,
+            268.239990234375,
+            145.99000549316406
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_metric_margin_2026",
+      "strategy": "v3_self_correcting",
+      "answer": "Based on metric_value evidence on page 1, Margin 2026: 22%",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 6,
+      "latency_ms": 847,
+      "evidence_pack_context_hit": 1.0,
+      "initial_sufficiency_score": 0.525,
+      "final_sufficiency_score": 1.0,
+      "initial_sufficiency_label": "partial",
+      "final_sufficiency_label": "sufficient",
+      "initial_failure_reason": "citation_mismatch",
+      "final_failure_reason": "passed",
+      "repair_round_count": 1,
+      "repair_success": 1.0,
+      "recovery": 1.0,
+      "stop_reason": "sufficient_after_repair",
+      "repair_actions": [
+        "citation_rerank"
+      ],
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "a736f34a-69db-442b-a481-8fc33e721204",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_text_enterprise_demand",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 119
+    },
+    {
+      "case_id": "curated_text_enterprise_demand",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 140,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "curated_text_enterprise_demand",
+      "strategy": "v2_multimodal_graph",
+      "answer": "Revenue increased because enterprise demand improved. Revenue 2026: 128 Revenue\n100\n128 Metric\t2025\t2026\nRevenue\t100\t128\nMargin\t18%\t22% Table 1. Revenue summary 1. Financial Highlights Revenue increased because enterprise demand improved. Revenue Chart candidate on page 1 100 Revenue 2025: 100 Metric\n2025\n2026 Margin\n18%\n22% Table 1. Revenue summary Revenue\n100\n128 Margin\n18%\n22%",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 150,
+      "evidence_pack_context_hit": 1.0,
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "b69c901e-0398-4bba-b9ee-a9239c30088e",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            58.17499923706055,
+            345.51593017578125,
+            73.28900146484375
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "23bf1fc2-b852-48ec-9fb6-89d61a9795fe",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "cb006d74-a4a6-4cde-bf81-653c186653da",
+          "page_number": 1,
+          "bbox": [
+            66.0,
+            160.25,
+            262.67999267578125,
+            173.99000549316406
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_text_enterprise_demand",
+      "strategy": "v3_self_correcting",
+      "answer": "Based on text_block evidence on page 1, Revenue increased because enterprise demand improved.",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 3,
+      "latency_ms": 249,
+      "evidence_pack_context_hit": 0.0,
+      "initial_sufficiency_score": 0.6167,
+      "final_sufficiency_score": 0.6167,
+      "initial_sufficiency_label": "partial",
+      "final_sufficiency_label": "partial",
+      "initial_failure_reason": "passed",
+      "final_failure_reason": "passed",
+      "repair_round_count": 0,
+      "repair_success": 0.0,
+      "recovery": 1.0,
+      "stop_reason": "no_repair_action",
+      "repair_actions": [],
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "b69c901e-0398-4bba-b9ee-a9239c30088e",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            58.17499923706055,
+            345.51593017578125,
+            73.28900146484375
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_text_risk_supply_chain",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 138
+    },
+    {
+      "case_id": "curated_text_risk_supply_chain",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 148,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "curated_text_risk_supply_chain",
+      "strategy": "v2_multimodal_graph",
+      "answer": "Risk factors include supply chain delays. Metric\n2025\n2026 Revenue 2025: 100 Margin\n18%\n22% Table 1. Revenue summary Revenue\n100\n128 Table 1. Revenue summary Metric\n2025\n2026 Revenue Metric\t2025\t2026\nRevenue\t100\t128\nMargin\t18%\t22% 100 Revenue 2026: 128",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 133,
+      "evidence_pack_context_hit": 1.0,
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "312936dd-bc7a-4399-9116-30549880abda",
+          "page_number": 2,
+          "bbox": [
+            60.0,
+            38.17499923706055,
+            257.4609680175781,
+            53.28900146484375
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "66feb3de-4eeb-4282-a4e2-851dde382fbe",
+          "page_number": 1,
+          "bbox": [
+            66.0,
+            132.25,
+            268.239990234375,
+            145.99000549316406
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "bafc8cb3-da69-4cb3-b9e9-1370a56f4c5b",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_text_risk_supply_chain",
+      "strategy": "v3_self_correcting",
+      "answer": "Based on text_block evidence on page 2, Risk factors include supply chain delays.",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 3,
+      "latency_ms": 229,
+      "evidence_pack_context_hit": 0.0,
+      "initial_sufficiency_score": 0.6167,
+      "final_sufficiency_score": 0.6167,
+      "initial_sufficiency_label": "partial",
+      "final_sufficiency_label": "partial",
+      "initial_failure_reason": "passed",
+      "final_failure_reason": "passed",
+      "repair_round_count": 0,
+      "repair_success": 0.0,
+      "recovery": 1.0,
+      "stop_reason": "no_repair_action",
+      "repair_actions": [],
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "312936dd-bc7a-4399-9116-30549880abda",
+          "page_number": 2,
+          "bbox": [
+            60.0,
+            38.17499923706055,
+            257.4609680175781,
+            53.28900146484375
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_graph_revenue_context",
+      "strategy": "v0_agent_baseline",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 121
+    },
+    {
+      "case_id": "curated_graph_revenue_context",
+      "strategy": "v1_evidence_pack",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 0.0,
+      "tool_calls": 1,
+      "latency_ms": 128,
+      "evidence_pack_context_hit": 1.0
+    },
+    {
+      "case_id": "curated_graph_revenue_context",
+      "strategy": "v2_multimodal_graph",
+      "answer": "Table 1. Revenue summary Visual summary: chart on page 1 appears related to table metrics. Revenue 2025: 100 Revenue increased because enterprise demand improved. Metric\n2025\n2026 Table 1. Revenue summary Table 1. Revenue summary Metric Metric\t2025\t2026\nRevenue\t100\t128\nMargin\t18%\t22% Revenue Chart candidate on page 1 100 Revenue 2026: 128",
+      "answer_term_hit": 1.0,
+      "citation_node_type_hit": 1.0,
+      "claim_supported": 1.0,
+      "tool_calls": 4,
+      "latency_ms": 136,
+      "evidence_pack_context_hit": 1.0,
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "982de256-9d7b-4010-baea-5d079cffc8c2",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            88.17500305175781,
+            195.10195922851562,
+            103.28900146484375
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "5ceb1988-6196-4fda-8d1a-d65590981740",
+          "page_number": 1,
+          "bbox": [
+            48.0,
+            72.0,
+            372.0,
+            220.0
+          ]
+        },
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "bafc8cb3-da69-4cb3-b9e9-1370a56f4c5b",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            125.0,
+            330.0,
+            209.0
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "curated_graph_revenue_context",
+      "strategy": "v3_self_correcting",
+      "answer": "Based on text_block evidence on page 1, Table 1. Revenue summary",
+      "answer_term_hit": 0.6666666666666666,
+      "citation_node_type_hit": 0.0,
+      "claim_supported": 1.0,
+      "tool_calls": 9,
+      "latency_ms": 601,
+      "evidence_pack_context_hit": 0.0,
+      "initial_sufficiency_score": 0.5667,
+      "final_sufficiency_score": 0.5667,
+      "initial_sufficiency_label": "partial",
+      "final_sufficiency_label": "partial",
+      "initial_failure_reason": "citation_mismatch",
+      "final_failure_reason": "citation_mismatch",
+      "repair_round_count": 2,
+      "repair_success": 1.0,
+      "recovery": 1.0,
+      "stop_reason": "max_repair_rounds_reached",
+      "repair_actions": [
+        "citation_rerank",
+        "citation_rerank"
+      ],
+      "evidence": [
+        {
+          "document_id": "150124bd-39b6-4879-b680-3bc5cf8c28b4",
+          "node_id": "982de256-9d7b-4010-baea-5d079cffc8c2",
+          "page_number": 1,
+          "bbox": [
+            60.0,
+            88.17500305175781,
+            195.10195922851562,
+            103.28900146484375
+          ]
+        }
+      ]
+    }
+  ]
+}
