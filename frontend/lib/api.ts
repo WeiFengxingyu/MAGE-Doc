@@ -7,6 +7,7 @@ import type {
   QuestionAnswerResponse,
   SearchResponse,
   SelfCorrectingQuestionResponse,
+  TrustedAnswerReportResponse,
   V2StatusResponse,
 } from "@/types/api";
 
@@ -262,6 +263,35 @@ export async function askSelfCorrectingQuestion({
   }
 
   return response.json() as Promise<SelfCorrectingQuestionResponse>;
+}
+
+export async function exportTrustedAnswerReport({
+  title,
+  question,
+  response: trustedAnswer,
+}: {
+  title: string;
+  question: string;
+  response: SelfCorrectingQuestionResponse;
+}): Promise<TrustedAnswerReportResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v3/reports/trusted-answer`, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title,
+      question,
+      response: trustedAnswer,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Trusted answer report export failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<TrustedAnswerReportResponse>;
 }
 
 export function absoluteApiUrl(path: string): string {

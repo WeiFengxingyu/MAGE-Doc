@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { AskPanel } from "@/components/ask-panel";
 import { PageViewer } from "@/components/page-viewer";
+import { ProductDemoPanel } from "@/components/product-demo-panel";
 import { RepairTracePanel } from "@/components/repair-trace-panel";
 import { RetrievalPanel } from "@/components/retrieval-panel";
 import type { Citation, DocumentRecord, EvidenceNode, PageRecord } from "@/types/api";
@@ -23,6 +24,12 @@ export function DocumentWorkbench({
 
   return (
     <>
+      <ProductDemoPanel
+        document={document}
+        pages={pages}
+        tables={tables}
+        textBlocks={textBlocks}
+      />
       {document?.status === "demo_ready" ? (
         <div className="demo-ready-panel">
           <div>

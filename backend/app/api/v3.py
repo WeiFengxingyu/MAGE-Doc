@@ -11,9 +11,14 @@ from app.schemas.v3 import (
     SelfCorrectingQuestionResponse,
     SufficiencyScoreRequest,
     SufficiencyScoreResponse,
+    TrustedAnswerReportRequest,
+    TrustedAnswerReportResponse,
+    TrustedDemoRequest,
+    TrustedDemoResponse,
 )
 from app.services.v3_failure_taxonomy import diagnose_failures
 from app.services.v3_repair_policy import build_repair_plan
+from app.services.v3_report_export import generate_trusted_answer_report
 from app.services.v3_self_correcting_agent import answer_self_correcting_question
 from app.services.v3_sufficiency import score_evidence
 
@@ -54,3 +59,34 @@ def self_correcting_question(
         max_repair_rounds=payload.max_repair_rounds,
     )
 
+
+@router.post("/reports/trusted-answer", response_model=TrustedAnswerReportResponse)
+def trusted_answer_report(payload: TrustedAnswerReportRequest) -> TrustedAnswerReportResponse:
+    return generate_trusted_answer_report(
+        title=payload.title,
+        question=payload.question,
+        response=payload.response,
+    )
+
+
+@router.post(
+    "/documents/{document_id}/trusted-demo",
+    response_model=TrustedDemoResponse,
+)
+def trusted_demo(
+    document_id: str,
+    payload: TrustedDemoRequest,
+    db: Session = Depends(get_db),
+) -> TrustedDemoResponse:
+    qa = answer_self_correcting_question(
+        db,
+        document_id,
+        payload.question,
+        max_repair_rounds=payload.max_repair_rounds,
+    )
+    report = generate_trusted_answer_report(
+        title=payload.report_title,
+        question=payload.question,
+        response=qa,
+    )
+    return {"qa": qa, "report": report}

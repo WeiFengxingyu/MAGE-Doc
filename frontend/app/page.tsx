@@ -6,11 +6,11 @@ import { UploadForm } from "@/components/upload-form";
 
 const pipeline = [
   "Upload",
-  "Render",
-  "Parse",
-  "Graph",
-  "Agent",
-  "Evaluate",
+  "Prepare",
+  "Evidence",
+  "Ask",
+  "Repair",
+  "Export",
 ];
 
 async function StatusPanel() {
@@ -79,13 +79,14 @@ export default function Home() {
     <main className="shell">
       <section className="topbar">
         <div>
-          <p className="eyebrow">V2 Advanced Multimodal Agent Platform</p>
+          <p className="eyebrow">Product-grade Agentic RAG Demo</p>
           <h1>MAGE-Doc</h1>
           <p className="subtitle">
-            Multimodal Agentic RAG for long-PDF reasoning with evidence graphs.
+            Multimodal Agentic RAG for trusted long-PDF QA, self-correction, and
+            citation-backed report export.
           </p>
         </div>
-        <div className="phase-badge">V2 Complete</div>
+        <div className="phase-badge">V3 + Product Demo</div>
       </section>
 
       <section className="workspace">
@@ -105,9 +106,9 @@ export default function Home() {
           <div className="workspace-header">
             <div>
               <p className="eyebrow">Document Workspace</p>
-              <h2>Upload and track long PDFs.</h2>
+              <h2>Run trusted document QA.</h2>
             </div>
-            <span className="stage-label">Phase 8</span>
+            <span className="stage-label">Product Demo</span>
           </div>
           <div className="workspace-grid">
             <UploadForm />
@@ -121,7 +122,7 @@ export default function Home() {
           <StatusPanel />
           <div className="note">
             <p>Current scope</p>
-            <strong>V2 OCR, vision, MCP, benchmark, diagnosis</strong>
+            <strong>V3 repair trace, evidence graph, report export</strong>
           </div>
           <V2CapabilityPanel />
         </aside>

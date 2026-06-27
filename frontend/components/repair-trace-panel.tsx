@@ -1,9 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 import { askSelfCorrectingQuestionAction } from "@/app/actions";
-import type { DocumentRecord, RepairTraceState, SufficiencyScore } from "@/types/api";
+import { exportTrustedAnswerReport } from "@/lib/api";
+import type {
+  DocumentRecord,
+  RepairTraceState,
+  SufficiencyScore,
+  TrustedAnswerReportResponse,
+} from "@/types/api";
 
 const initialState: RepairTraceState = {
   ok: false,
@@ -31,7 +38,48 @@ function ScorePill({ label, score }: SufficiencyScore) {
 
 export function RepairTracePanel({ document }: { document: DocumentRecord | null }) {
   const [state, formAction] = useFormState(askSelfCorrectingQuestionAction, initialState);
+  const [report, setReport] = useState<TrustedAnswerReportResponse | null>(null);
+  const [reportMessage, setReportMessage] = useState("Export a reviewer-ready Markdown report.");
+  const [isExporting, setIsExporting] = useState(false);
   const response = state.response;
+
+  useEffect(() => {
+    setReport(null);
+    setReportMessage("Export a reviewer-ready Markdown report.");
+  }, [response?.trace_id]);
+
+  async function handleExportReport() {
+    if (!response) {
+      return;
+    }
+    setIsExporting(true);
+    setReportMessage("Generating Markdown report...");
+    try {
+      const payload = await exportTrustedAnswerReport({
+        title: `${document?.filename ?? "MAGE-Doc"} Trusted Answer Report`,
+        question: state.question,
+        response,
+      });
+      setReport(payload);
+      setReportMessage(
+        `${payload.summary.citation_count} citations, ${payload.summary.repair_round_count} repair rounds exported.`,
+      );
+
+      const blob = new Blob([payload.markdown], {
+        type: "text/markdown;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = window.document.createElement("a");
+      anchor.href = url;
+      anchor.download = payload.filename;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      setReportMessage(error instanceof Error ? error.message : "Report export failed.");
+    } finally {
+      setIsExporting(false);
+    }
+  }
 
   return (
     <section className="repair-panel">
@@ -74,6 +122,34 @@ export function RepairTracePanel({ document }: { document: DocumentRecord | null
           <div className="repair-answer">
             <strong>{response.final_diagnosis.reason}</strong>
             <p>{response.final_diagnosis.message}</p>
+          </div>
+
+          <div className="report-export-panel">
+            <div className="report-export-row">
+              <div>
+                <p className="eyebrow">Deliverable</p>
+                <strong>Trusted answer report</strong>
+                <span>{reportMessage}</span>
+              </div>
+              <button
+                className="secondary-button"
+                disabled={isExporting}
+                onClick={handleExportReport}
+                type="button"
+              >
+                {isExporting ? "Exporting..." : "Export .md"}
+              </button>
+            </div>
+
+            {report ? (
+              <div className="report-preview">
+                <div>
+                  <span>{report.filename}</span>
+                  <span>{report.summary.final_sufficiency}</span>
+                </div>
+                <pre>{report.markdown.slice(0, 900)}</pre>
+              </div>
+            ) : null}
           </div>
 
           <div className="repair-rounds">

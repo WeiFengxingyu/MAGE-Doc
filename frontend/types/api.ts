@@ -292,6 +292,18 @@ export type RepairTraceState = {
   response: SelfCorrectingQuestionResponse | null;
 };
 
+export type TrustedAnswerReportResponse = {
+  filename: string;
+  markdown: string;
+  summary: {
+    final_sufficiency: string;
+    final_sufficiency_score: number;
+    repair_round_count: number;
+    citation_count: number;
+    diagnosis_reason: string;
+  };
+};
+
 export type PrepareDemoResponse = {
   document_id: string;
   status: "demo_ready";

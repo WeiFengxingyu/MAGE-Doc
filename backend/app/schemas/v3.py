@@ -61,6 +61,22 @@ class SelfCorrectingQuestionRequest(BaseModel):
     max_repair_rounds: int = 2
 
 
+class TrustedAnswerReportRequest(BaseModel):
+    title: str = "Trusted Answer Report"
+    question: str = ""
+    response: dict[str, Any] = Field(default_factory=dict)
+
+
+class TrustedAnswerReportResponse(BaseModel):
+    filename: str
+    markdown: str
+    summary: dict[str, Any]
+
+
+class TrustedDemoRequest(SelfCorrectingQuestionRequest):
+    report_title: str = "Trusted Answer Report"
+
+
 class RepairRoundResponse(BaseModel):
     round_index: int
     diagnosis: V3DiagnosisResponse
@@ -87,3 +103,7 @@ class SelfCorrectingQuestionResponse(BaseModel):
     repair_rounds: list[RepairRoundResponse]
     stop_reason: str
 
+
+class TrustedDemoResponse(BaseModel):
+    qa: SelfCorrectingQuestionResponse
+    report: TrustedAnswerReportResponse

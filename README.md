@@ -4,6 +4,28 @@ MAGE-Doc is a multimodal Agentic RAG system for long-PDF reasoning with evidence
 
 The project focuses on high-value document intelligence scenarios where answers require text, tables, figures, page layout, section hierarchy, and cross-page evidence rather than plain top-k text retrieval.
 
+## Core Highlights
+
+- Product-grade demo flow: upload/prepare a PDF, ask a cited question, inspect self-correction, and export a trusted Markdown answer report.
+- Multimodal evidence graph over pages, text blocks, tables, OCR blocks, figures, chart summaries, and metric values.
+- Failure-aware Agentic RAG loop with evidence sufficiency scoring, repair policy, repair trace, and claim verification.
+- Interview-friendly delivery surface: FastAPI APIs, Next.js workbench, benchmark reports, runbooks, and resume bullets.
+
+## Product Demo Flow
+
+```text
+Prepare PDF -> Evidence Graph -> Trusted QA -> Self-Correction -> Markdown Report
+```
+
+Core product APIs:
+
+```text
+POST /api/documents/{document_id}/prepare-demo
+POST /api/v3/documents/{document_id}/self-correcting-questions
+POST /api/v3/reports/trusted-answer
+POST /api/v3/documents/{document_id}/trusted-demo
+```
+
 ## Positioning
 
 **Chinese name:** MAGE-Doc：基于多模态证据图的长文档 Agentic RAG 系统
@@ -18,6 +40,9 @@ MAGE-Doc is designed as a resume-grade AI application project that is clearly di
 - [Outline Design](docs/outline-design.md)
 - [Development Plan](docs/development-plan.md)
 - [Version Roadmap](docs/version-roadmap.md)
+- [Product Demo Polish Design](docs/product-demo/product-demo-polish-design.md)
+- [Product Demo Polish Plan](docs/product-demo/product-demo-polish-plan.md)
+- [Product Demo Polish Worklog](docs/product-demo/product-demo-polish-worklog.md)
 - [Batch 1 Implementation Plan](docs/batch1-implementation-plan.md)
 - [Development Workflow](docs/development-workflow.md)
 - [V1 Outline Design](docs/v1/v1-outline-design.md)
@@ -276,3 +301,12 @@ Run V3 reliability evaluation:
 ```powershell
 backend\.venv\Scripts\python.exe eval\run_eval.py --cases eval\cases\v3_curated_cases.jsonl --output eval\reports\v3_reliability_report.json
 ```
+
+## Product Demo Polish Status
+
+Product demo polish is complete:
+
+- Workbench now starts with a product demo panel showing readiness, flow, and evidence/report capabilities.
+- V3 Repair Trace can export a trusted Markdown answer report with answer, citations, sufficiency, diagnosis, repair rounds, claim verification, and tool trace.
+- Backend exposes `/api/v3/reports/trusted-answer` for report export and `/api/v3/documents/{document_id}/trusted-demo` for one-call product demo automation.
+- Product demo design, plan, and worklog are documented under `docs/product-demo/`.

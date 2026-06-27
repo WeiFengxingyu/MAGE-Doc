@@ -143,5 +143,40 @@ def test_v3_self_correcting_question_repairs_table_lookup(tmp_path: Path, monkey
             "graph_depth_expansion",
             "citation_rerank",
         }
+
+        report_response = client.post(
+            "/api/v3/reports/trusted-answer",
+            json={
+                "title": "Revenue Trust Report",
+                "question": payload["question"],
+                "response": payload,
+            },
+        )
+        assert report_response.status_code == 200
+        report = report_response.json()
+        assert report["filename"].endswith(".md")
+        assert "# Revenue Trust Report" in report["markdown"]
+        assert "## Citations" in report["markdown"]
+        assert "## Repair Rounds" in report["markdown"]
+        assert "## Tool Trace" in report["markdown"]
+        assert report["summary"]["citation_count"] == len(payload["citations"])
+        assert report["summary"]["repair_round_count"] == payload["repair_round_count"]
+
+        demo_response = client.post(
+            f"/api/v3/documents/{document['id']}/trusted-demo",
+            json={
+                "question": "What was revenue in 2026?",
+                "max_repair_rounds": 2,
+                "report_title": "One Click Revenue Demo",
+            },
+        )
+        assert demo_response.status_code == 200
+        demo = demo_response.json()
+        assert demo["qa"]["citations"]
+        assert "# One Click Revenue Demo" in demo["report"]["markdown"]
+        assert demo["report"]["summary"]["final_sufficiency"] in {
+            "partial",
+            "sufficient",
+        }
     finally:
         _reset_client()
