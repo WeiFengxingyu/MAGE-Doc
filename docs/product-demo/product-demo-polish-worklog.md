@@ -44,6 +44,7 @@ Product Demo Polish：产品级主线 Demo + 真实产品感功能。
 - 新增 `frontend/components/product-demo-panel.tsx`，在 Workbench 顶部展示 demo readiness、主线流程和关键能力。
 - 增强 `frontend/components/repair-trace-panel.tsx`，支持报告导出、浏览器下载和 Markdown 预览。
 - 更新 README 顶部 core highlights、product demo flow、核心 API 和产品化闭环状态。
+- 增强 `frontend/components/product-demo-panel.tsx`，新增 `Run interview demo` 一键演示入口，自动执行 prepare、trusted-demo、报告预览和 Markdown 下载。
 
 ### 验证结果
 
@@ -51,3 +52,20 @@ Product Demo Polish：产品级主线 Demo + 真实产品感功能。
 - `backend\.venv\Scripts\python.exe -m pytest backend\app\tests`：46 passed。
 - `npm run build`：Next.js production build passed。
 - GitHub 同步完成后，本阶段可作为项目产品化闭环版本。
+
+## 2026-06-27：一键面试 Demo 补强
+
+### 用户要求
+
+- 补一个一键演示功能。
+- 完成后上传更新。
+- 同步文档。
+
+### 实现计划
+
+- 前端类型新增 `TrustedDemoResponse`。
+- 前端 API 新增 `runTrustedDemo`，调用 `/api/v3/documents/{document_id}/trusted-demo`。
+- Product Demo Panel 新增 `Run interview demo` 按钮。
+- 一键流程：若文档未 `demo_ready`，先调用 `prepareDemo`；随后调用 `trusted-demo`；最后展示答案摘要、最终 sufficiency、repair count、citation count、stop reason 和 Markdown 预览。
+- 报告下载复用浏览器 Blob 下载，不落本地文件。
+- 同步 README、产品 Demo 设计/计划和面试讲解文档。

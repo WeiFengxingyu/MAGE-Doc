@@ -1008,6 +1008,112 @@ h2 {
   gap: 8px;
 }
 
+.interview-demo-runner {
+  display: grid;
+  gap: 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.interview-demo-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto;
+  gap: 10px;
+}
+
+.interview-demo-controls input {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+  padding: 10px;
+}
+
+.interview-demo-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.interview-demo-status span {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.interview-demo-result {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #f0fdf4;
+  padding: 12px;
+}
+
+.interview-demo-result-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.interview-demo-result-header strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.interview-demo-result-header span {
+  overflow: hidden;
+  max-width: 260px;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.interview-demo-result p {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.interview-demo-result-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.interview-demo-result-metrics span {
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #166534;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 7px;
+}
+
+.interview-demo-result pre {
+  overflow: auto;
+  max-height: 180px;
+  margin: 0;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  background: #052e2b;
+  color: #d8f3ee;
+  font-size: 11px;
+  line-height: 1.55;
+  padding: 10px;
+  white-space: pre-wrap;
+}
+
 .product-demo-flow span {
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -1294,7 +1400,8 @@ h2 {
   }
 
   .product-demo-flow,
-  .product-demo-metrics {
+  .product-demo-metrics,
+  .interview-demo-controls {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1313,7 +1420,13 @@ h2 {
   }
 
   .product-demo-main,
-  .report-export-row {
+  .report-export-row,
+  .interview-demo-result-header,
+  .interview-demo-status {
     flex-direction: column;
+  }
+
+  .interview-demo-controls {
+    grid-template-columns: 1fr;
   }
 }

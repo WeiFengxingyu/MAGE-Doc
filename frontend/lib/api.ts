@@ -8,6 +8,7 @@ import type {
   SearchResponse,
   SelfCorrectingQuestionResponse,
   TrustedAnswerReportResponse,
+  TrustedDemoResponse,
   V2StatusResponse,
 } from "@/types/api";
 
@@ -292,6 +293,37 @@ export async function exportTrustedAnswerReport({
   }
 
   return response.json() as Promise<TrustedAnswerReportResponse>;
+}
+
+export async function runTrustedDemo({
+  documentId,
+  question,
+  reportTitle,
+  maxRepairRounds = 2,
+}: {
+  documentId: string;
+  question: string;
+  reportTitle: string;
+  maxRepairRounds?: number;
+}): Promise<TrustedDemoResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v3/documents/${documentId}/trusted-demo`, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      question,
+      max_repair_rounds: maxRepairRounds,
+      report_title: reportTitle,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Trusted demo request failed: ${response.status}`);
+  }
+
+  return response.json() as Promise<TrustedDemoResponse>;
 }
 
 export function absoluteApiUrl(path: string): string {

@@ -22,8 +22,9 @@ Product Demo Polish：产品级主线 Demo + 真实产品感功能
 | Step 2 | Report Export API | Markdown report service + `/api/v3/reports/trusted-answer` | API 测试通过 |
 | Step 3 | Product Demo Panel | Workbench 增加产品主线面板 | 前端 build 通过 |
 | Step 4 | Report Export UI | Repair Trace 面板增加导出和预览 | 前端 build 通过 |
-| Step 5 | Docs Polish | README 顶部 highlights、demo flow、工作日志 | 文档可读 |
-| Step 6 | Final Verification | 后端测试、前端 build、提交推送 | main 与 origin/main 同步 |
+| Step 5 | One-click Interview Demo | Product Demo Panel 增加一键 prepare + trusted-demo + report preview/download | 前端 build 通过 |
+| Step 6 | Docs Polish | README 顶部 highlights、demo flow、工作日志 | 文档可读 |
+| Step 7 | Final Verification | 后端测试、前端 build、提交推送 | main 与 origin/main 同步 |
 
 ## 3. 实现原则
 
@@ -39,9 +40,9 @@ Product Demo Polish：产品级主线 Demo + 真实产品感功能
 
 - 产品 Demo 设计和计划文档存在。
 - Workbench 展示产品主线 Demo。
+- Workbench 提供 `Run interview demo` 一键演示入口。
 - V3 repair trace 可导出 Markdown 报告。
 - README 顶部有 core highlights 和 demo flow。
 - 后端全量测试通过。
 - 前端 production build 通过。
 - GitHub 已同步。
-

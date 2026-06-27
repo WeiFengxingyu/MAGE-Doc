@@ -304,6 +304,11 @@ export type TrustedAnswerReportResponse = {
   };
 };
 
+export type TrustedDemoResponse = {
+  qa: SelfCorrectingQuestionResponse;
+  report: TrustedAnswerReportResponse;
+};
+
 export type PrepareDemoResponse = {
   document_id: string;
   status: "demo_ready";
